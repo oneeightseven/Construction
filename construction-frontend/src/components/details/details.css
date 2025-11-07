@@ -1,0 +1,89 @@
+.form-container .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-container .form-label {
+  font-weight: 600;
+  color: #0d6efd;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.form-container .form-control {
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid #dee2e6;
+  padding: 0.75rem 1rem;
+}
+
+.form-container .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-container .form-control-lg {
+  min-height: 48px;
+}
+
+/* Стили для полей только для чтения */
+.form-container .form-control[readonly] {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+/* Цветовые акценты для разных типов полей */
+.form-container .border-accent-warning {
+  border-color: rgba(255, 193, 7, 0.5) !important;
+}
+
+.form-container .border-accent-success {
+  border-color: rgba(25, 135, 84, 0.5) !important;
+}
+
+.form-container .border-accent-primary {
+  border-color: rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Стили для react-select */
+.react-select-container .react-select__control {
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+  min-height: 48px;
+  transition: all 0.2s ease-in-out;
+  font-size: 1rem;
+}
+
+.react-select-container .react-select__control--is-focused {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.react-select-container .react-select__menu {
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.react-select-container .react-select__option {
+  padding: 0.75rem 1rem;
+}
+
+.react-select-container .react-select__option--is-focused {
+  background-color: #e9ecef;
+}
+
+.react-select-container .react-select__option--is-selected {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.react-select-container .react-select__placeholder {
+  color: #6c757d;
+}
+
+/* Иконки */
+.form-label i {
+  width: 16px;
+  text-align: center;
+}

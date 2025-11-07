@@ -52,3 +52,10 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+
+# Frontend exceptions
+!construction-frontend/
+construction-frontend/node_modules/
+construction-frontend/dist/
+construction-frontend/build/
