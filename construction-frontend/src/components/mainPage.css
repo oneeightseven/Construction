@@ -1,0 +1,17 @@
+.icon-with-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+}
+
+.icon-with-text img {
+  margin-bottom: 8px; /* Отступ между картинкой и текстом */
+}
+
+.header{
+    margin-top: 15px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px; /* Регулируйте значение по необходимости */
+}

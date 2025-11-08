@@ -2,6 +2,11 @@ import MainTable from "./mainTable/mainTable";
 import FilterTree from "./filters/filterTree";
 import { useState } from 'react';
 import Details from "./details/details";
+import clients from '../images/clients.png';
+import shoppingMalls from '../images/shoppingMalls.png';
+import objects from '../images/objects.png';
+import dogovor from '../images/dogovor.png';
+import "./mainPage.css"
 
 const MainPage = ({ }) => {
 
@@ -26,32 +31,63 @@ const MainPage = ({ }) => {
   }
 
   return (
-    <div className="container-fluid" style={{ marginTop: '140px' }}>
-      <div className="row">
-        {!selectedWork ? (
-          <>
-            <div className="col-3">
-              <FilterTree onSearch={handleSearch} />
+    <>
+      <div>
+        <div className="row header">
+          <div className="col-1">
+            <div className="icon-with-text">
+              <img src={clients} />
+              <span>Клиенты</span>
             </div>
-            <div className="col-6">
-              <MainTable
-                filters={activeFilters}
-                strictSearch={strictSearch}
-                searchMode={searchMode}
-                setSelectedWork={handleSelectWork}
-              />
-            </div>
-          </>
-        ) : (<div className="col-6">
-            <Details exitFunc={resetSelectedWork} work={selectedWork}/>
           </div>
-        )}
-
-        <div className="col-3">
-          {/* Дополнительная информация */}
+          <div className="col-1">
+            <div className="icon-with-text">
+              <img src={shoppingMalls} />
+              <span>Торговые центры</span>
+            </div>
+          </div>
+          <div className="col-1">
+            <div className="icon-with-text">
+              <img src={objects} />
+              <span>Объекты</span>
+            </div>
+          </div>
+          <div className="col-1">
+            <div className="icon-with-text">
+              <img src={dogovor} />
+              <span>Детализация</span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+      <div className="container-fluid default-bg" style={{ marginTop: '20px' }}>
+        <div className="row">
+          {!selectedWork ? (
+            <>
+              <div className="col-3">
+                <FilterTree onSearch={handleSearch} />
+              </div>
+              <div className="col-6">
+                <MainTable
+                  filters={activeFilters}
+                  strictSearch={strictSearch}
+                  searchMode={searchMode}
+                  setSelectedWork={handleSelectWork}
+                />
+              </div>
+            </>
+          ) : (<div className="col-6">
+            <Details exitFunc={resetSelectedWork} work={selectedWork} />
+          </div>
+          )}
+
+          <div className="col-3">
+            {/* Дополнительная информация */}
+          </div>
+        </div>
+      </div>
+    </>
+
   );
 };
 
