@@ -4,7 +4,10 @@ import { statusService } from '../../services/statusService.js';
 import { clientService } from '../../services/clientService.js';
 import { cityService } from '../../services/cityService.js';
 import { shoppingMallService } from '../../services/shoppingMallService.js';
+import { workService } from '../../services/workService.js';
 import '../details/details.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -54,34 +57,40 @@ const Details = ({ work, exitFunc }) => {
     prepareOption(work.city, setCurrentCity);
     prepareOption(work.shoppingMall, setCurrentShoppingMall);
 
-
     loadAllData();
   }, []);
-
-  const handleSave = () => {
-    exitFunc();
-  };
 
   const handleClose = () => {
     exitFunc();
   };
 
-  const handleSaveAndClose = () => {
-    exitFunc();
-  };
+  const handleSave = (shouldClose) => {
+  workService.update(work)
+    .then(response => {
+      toast.success('Данные успешно сохранены!');
+      if (shouldClose) {
+        exitFunc();
+      }
+    })
+    .catch(error => {
+      toast.error('Ошибка при сохранении: ' + error.message);
+    });
+};
+
 
   return (
     <div className="container-fluid form-container">
+     <ToastContainer position="top-right" autoClose={2000} />
       <div className="row mb-4">
         <div className="col-12">
           <div className="d-flex gap-3 justify-content-start">
             <button type="button" className="btn btn-outline-primary btn-lg px-4" onClick={handleClose}>
               <i className="bi bi-check-circle me-2"></i>Закрыть
             </button>
-            <button type="button" className="btn btn-outline-primary btn-lg px-4" onClick={handleSave}>
+            <button type="button" className="btn btn-outline-primary btn-lg px-4" onClick={() => handleSave(false)}>
               <i className="bi bi-check-circle me-2"></i>Сохранить
             </button>
-            <button type="button" className="btn btn-primary btn-lg px-4" onClick={handleSaveAndClose}>
+            <button type="button" className="btn btn-primary btn-lg px-4" onClick={() => handleSave(true)}>
               <i className="bi bi-check-all me-2"></i>Сохранить и закрыть
             </button>
           </div>

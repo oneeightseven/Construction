@@ -93,5 +93,12 @@ namespace Construction.Controllers
             var cities = await _cityService.GetAllAsync();
             return Ok(cities);
         }
+
+        [HttpPost("UpdateWork")]
+        public async Task<IActionResult> UpdateWork([FromBody] WorkDto model)
+        {
+            var result = await _workService.UpdateWork(model);
+            return Ok(result);
+        }
     }
 }

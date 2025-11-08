@@ -5,5 +5,6 @@ namespace Construction.Service.Interfaces
     public interface IWorkService
     {
         Task<List<WorkDto>> GetAllAsync();
+        Task<string> UpdateWork(WorkDto work);
     }
 }
