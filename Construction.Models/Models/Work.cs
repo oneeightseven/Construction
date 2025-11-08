@@ -48,6 +48,12 @@ namespace Construction.Models.Models
         [ForeignKey("ClientId")]
         public Client? Client { get; set; }
 
+        [Required]
+        public int EmployeeId { get; set; }
+
+        [ForeignKey("EmployeeId")]
+        public Employee? Employee { get; set; }
+
         public DateOnly? DateOfCreation { get; set; } = null;
         public decimal? Summ { get; set; }
     }

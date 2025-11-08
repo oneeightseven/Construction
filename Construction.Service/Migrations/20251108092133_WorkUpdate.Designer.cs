@@ -3,6 +3,7 @@ using System;
 using Construction.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Construction.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251108092133_WorkUpdate")]
+    partial class WorkUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,9 +242,6 @@ namespace Construction.Service.Migrations
                     b.Property<DateOnly?>("DateOfCreation")
                         .HasColumnType("date");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("ShoppingMallId")
                         .HasColumnType("integer");
 
@@ -263,8 +263,6 @@ namespace Construction.Service.Migrations
                     b.HasIndex("ClientId");
 
                     b.HasIndex("ConstructionObjectId");
-
-                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("ShoppingMallId");
 
@@ -321,12 +319,6 @@ namespace Construction.Service.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Construction.Models.Models.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Construction.Models.Models.ShoppingMall", "ShoppingMall")
                         .WithMany()
                         .HasForeignKey("ShoppingMallId")
@@ -346,8 +338,6 @@ namespace Construction.Service.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("ConstructionObject");
-
-                    b.Navigation("Employee");
 
                     b.Navigation("ShoppingMall");
 
