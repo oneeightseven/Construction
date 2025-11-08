@@ -35,9 +35,18 @@ const Details = ({ work, exitFunc }) => {
     setShoppingMalls(shoppingMalls.map(item => ({ value: item.id, label: item.name })));
   }
 
-  const changeStatus = (status) => {
-    console.log("TOOD")
-  }
+  const changeWorkField = (field, object) => {
+    const setters = {
+      status: setCurrentStatus,
+      city: setCurrentCity,
+      client: setCurrentClient,
+      shoppingMall: setCurrentShoppingMall
+    };
+    setters[field](object);
+
+    work[field].id = object.value;
+    work[field].name = object.label;
+  };
 
   useEffect(() => {
     prepareOption(work.status, setCurrentStatus);
@@ -86,7 +95,7 @@ const Details = ({ work, exitFunc }) => {
               <label className="form-label">
                 <i className="bi bi-calendar3 me-2"></i>Дата заявки
               </label>
-              <input className="form-control form-control-lg border-accent-primary" value={work.dateOfCreation} readOnly/>
+              <input className="form-control form-control-lg border-accent-primary" value={work.dateOfCreation} readOnly />
             </div>
           </div>
 
@@ -95,14 +104,14 @@ const Details = ({ work, exitFunc }) => {
               <label className="form-label">
                 <i className="bi bi-hash me-2"></i>Номер заявки
               </label>
-              <input className="form-control form-control-lg border-accent-primary bg-light" value={work.id} readOnly/>
+              <input className="form-control form-control-lg border-accent-primary bg-light" value={work.id} readOnly />
             </div>
           </div>
 
           <div className="col-md-6 col-lg-4">
             <div className="form-group">
               <label className="form-label"><i className="bi bi-clock me-2"></i>Срок выполнения</label>
-              <input className="form-control form-control-lg border-accent-warning" value={work.dateBid}/>
+              <input className="form-control form-control-lg border-accent-warning" value={work.dateBid} />
             </div>
           </div>
 
@@ -112,7 +121,7 @@ const Details = ({ work, exitFunc }) => {
                 <i className="bi bi-building me-2"></i>Контрагент
               </label>
               <div className="react-select-container">
-                <Select value={currentClient} options={clients} isSearchable={true} placeholder="Выберите контрагента..." onChange={changeStatus} autoFocus menuPlacement="auto" classNamePrefix="react-select"/>
+                <Select value={currentClient} options={clients} isSearchable={true} placeholder="Выберите контрагента..." onChange={(object) => changeWorkField('client', object)} autoFocus menuPlacement="auto" classNamePrefix="react-select" />
               </div>
             </div>
           </div>
@@ -123,7 +132,7 @@ const Details = ({ work, exitFunc }) => {
                 <i className="bi bi-geo-alt me-2"></i>Город
               </label>
               <div className="react-select-container">
-                <Select value={currentCity} options={cities} isSearchable={true} placeholder="Выберите город..." onChange={changeStatus} menuPlacement="auto" classNamePrefix="react-select"/>
+                <Select value={currentCity} options={cities} isSearchable={true} placeholder="Выберите город..." onChange={(object) => changeWorkField('city', object)} menuPlacement="auto" classNamePrefix="react-select" />
               </div>
             </div>
           </div>
@@ -134,7 +143,7 @@ const Details = ({ work, exitFunc }) => {
                 <i className="bi bi-info-circle me-2"></i>Статус
               </label>
               <div className="react-select-container">
-                <Select value={currentStatus} options={statuses} isSearchable={true} placeholder="Выберите статус..." onChange={changeStatus} menuPlacement="auto" classNamePrefix="react-select"/>
+                <Select value={currentStatus} options={statuses} isSearchable={true} placeholder="Выберите статус..." onChange={(object) => changeWorkField('status', object)} menuPlacement="auto" classNamePrefix="react-select" />
               </div>
             </div>
           </div>
@@ -145,7 +154,7 @@ const Details = ({ work, exitFunc }) => {
                 <i className="bi bi-shop me-2"></i>Торговый центр
               </label>
               <div className="react-select-container">
-                <Select value={currentShoppingMall} options={shoppingMalls} isSearchable={true} placeholder="Выберите торговый центр..." onChange={changeStatus} menuPlacement="auto" classNamePrefix="react-select"/>
+                <Select value={currentShoppingMall} options={shoppingMalls} isSearchable={true} placeholder="Выберите торговый центр..." onChange={(object) => changeWorkField('shoppingMall', object)} menuPlacement="auto" classNamePrefix="react-select" />
               </div>
             </div>
           </div>
@@ -155,7 +164,7 @@ const Details = ({ work, exitFunc }) => {
               <label className="form-label">
                 <i className="bi bi-calendar-check me-2"></i>Дата завершения
               </label>
-              <input className="form-control form-control-lg border-accent-success" value={work.completionDate}/>
+              <input className="form-control form-control-lg border-accent-success" value={work.completionDate} />
             </div>
           </div>
 
@@ -164,7 +173,7 @@ const Details = ({ work, exitFunc }) => {
               <label className="form-label">
                 <i className="bi bi-person me-2"></i>Менеджер
               </label>
-              <input className="form-control form-control-lg border-accent-primary" placeholder="Не назначен"/>
+              <input className="form-control form-control-lg border-accent-primary" value={work.employee.surname + " " + work.employee.name + " " + work.employee.patronymic} readOnly />
             </div>
           </div>
         </div>

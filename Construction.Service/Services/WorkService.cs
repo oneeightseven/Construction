@@ -23,6 +23,7 @@ namespace Construction.Service.Services
                                              .Include(x => x.Client)
                                              .Include(x => x.Status)
                                              .Include(x => x.ConstructionObject)
+                                             .Include(x => x.Employee)
                                              .ToListAsync();
 
             return WorkMapping.Map(result);

@@ -58,7 +58,8 @@ namespace Construction.Controllers
                     ConstructionObject = firstWork.ConstructionObject,
                     Client = firstWork.Client,
                     DateOfCreation = firstWork.DateOfCreation,
-                    Summ = firstWork.Summ
+                    Summ = firstWork.Summ,
+                    Employee = firstWork.Employee
                 });
             }
 
