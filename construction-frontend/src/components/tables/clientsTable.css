@@ -1,32 +1,32 @@
-.client-container {
+.construction-objects-container {
   min-height: 100vh;
   /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
 }
 
-.client-table {
+.construction-table {
   border-radius: 15px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
 }
 
-.client-row {
+.construction-row {
   transition: all 0.3s ease;
   cursor: pointer;
   margin: 0;
 }
 
-.client-row:hover {
+.construction-row:hover {
   background-color: #f8f9fa;
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.client-row:last-child {
+.construction-row:last-child {
   border-bottom: none !important;
 }
 
-.client-id {
+.object-id {
   font-size: 0.8rem;
   font-weight: 600;
   padding: 0.4rem 0.8rem;
@@ -34,13 +34,13 @@
   border: 1px solid #dee2e6;
 }
 
-.client-name {
+.object-name {
   color: #2c3e50;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
-.construction-row:hover .client-name {
+.construction-row:hover .object-name {
   color: #3498db;
 }
 
@@ -81,16 +81,16 @@
   }
 }
 
-.client-row {
+.construction-row {
   animation: fadeIn 0.5s ease forwards;
 }
 
 @media (max-width: 768px) {
-  .client-row {
+  .construction-row {
     padding: 1rem 0;
   }
   
-  .client-id {
+  .object-id {
     font-size: 0.7rem;
     padding: 0.3rem 0.6rem;
   }
