@@ -7,6 +7,7 @@ import shoppingMalls from '../images/shoppingMalls.png';
 import objects from '../images/objects.png';
 import dogovor from '../images/dogovor.png';
 import ConstructionObjectsTable from "./tables/constructionObjectsTable";
+import ShoppingMallTable from "./tables/shoppingMallTable";
 import ExcelExportForm from "./forms/excelExportForm";
 import { useBase } from './contexts/BaseContext';
 import "./mainPage.css"
@@ -100,6 +101,7 @@ const MainPage = ({ }) => {
           <>
             {currentTable === "Objects" && <ConstructionObjectsTable/>}
             {currentTable === "Details" && <ExcelExportForm/>}
+            {currentTable === "ShoppingMalls" && <ShoppingMallTable/>}
           </>
         )}
         

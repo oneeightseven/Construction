@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './constructionObjectsTable.css';
-import { constructionObjectService } from '../../services/constructionObjectService';
-import ConstructionObjectForm from '../forms/constructionObjectForm';
+import { shoppingMallService } from '../../services/shoppingMallService';
+import ShoppingMallForm from '../forms/shoppingMallForm';
 
-const ConstructionObjectsTable = () => {
+const ShoppingMallTable = () => {
   const [objects, setObjects] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,12 +18,12 @@ const ConstructionObjectsTable = () => {
 
   const fetchObjects = () => {
     setLoading(true);
-    constructionObjectService.getAll()
+    shoppingMallService.getAll()
       .then(response => {
         setObjects(response || []);
       })
       .catch(error => {
-        toast.error('Ошибка при загрузке объектов');
+        toast.error('Ошибка при загрузке торговых центров');
       })
       .finally(() => {
         setLoading(false);
@@ -31,15 +31,15 @@ const ConstructionObjectsTable = () => {
   };
 
   const handleDelete = (id, name) => {
-    if (window.confirm(`Вы уверены, что хотите удалить объект "${name}"?`)) {
-      constructionObjectService.delete(id)
+    if (window.confirm(`Вы уверены, что хотите удалить торговый центр "${name}"?`)) {
+      shoppingMallService.delete(id)
         .then(() => {
           setObjects(prev => prev.filter(obj => obj.id !== id));
           toast.success(`Объект "${name}" успешно удален`);
         })
         .catch(error => {
-          console.error('Ошибка при удалении объекта:', error);
-          toast.error('Ошибка при удалении объекта');
+          console.error('Ошибка при удалении торгового центра:', error);
+          toast.error('Ошибка при удалении торгового центра');
         });
     }
   };
@@ -79,10 +79,10 @@ const ConstructionObjectsTable = () => {
           <div className="row mb-4">
             <div className="col-12">
               <div className="d-flex justify-content-between align-items-center">
-                <h2 className="mb-0">Строительные объекты</h2>
+                <h2 className="mb-0">Торговые центры</h2>
                 <button className="btn btn-primary btn-add" onClick={handleAddObject}>
                   <i className="bi bi-plus-circle me-2"></i>
-                  Добавить объект
+                  Добавить ТЦ
                 </button>
               </div>
             </div>
@@ -95,12 +95,12 @@ const ConstructionObjectsTable = () => {
                   {objects.length === 0 ? (
                     <div className="text-center py-5">
                       <i className="bi bi-inbox display-1 text-muted"></i>
-                      <p className="mt-3 text-muted">Нет строительных объектов</p>
+                      <p className="mt-3 text-muted">Нет торговых центров</p>
                     </div>
                   ) : (
                     <div className="table-responsive">
                       {objects.map((object) => (
-                        <div key={object.id} className="construction-row row align-items-center py-3 border-bottom" onClick={() => handleClick(object)}>
+                        <div key={object.id} className="construction-row row align-items-center py-3 border-bottom" onDoubleClick={() => handleClick(object)}>
                           <div className="col-1 text-center">
                             <span className="object-id badge bg-light text-dark">
                               #{object.id}
@@ -110,7 +110,7 @@ const ConstructionObjectsTable = () => {
                             <h6 className="mb-0 object-name">{object.name}</h6>
                           </div>
                           <div className="col-3 text-end">
-                            <button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(object.id, object.name)} title="Удалить объект">
+                            <button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(object.id, object.name)} title="Удалить ТЦ">
                               <i className="bi bi-trash"></i>
                               Удалить
                             </button>
@@ -128,8 +128,8 @@ const ConstructionObjectsTable = () => {
     );
   }
   else {
-    return <ConstructionObjectForm object={updateModel} onCancel={closeUpdateModal}/>
+    return <ShoppingMallForm object={updateModel} onCancel={closeUpdateModal}/>
   }
 };
 
-export default ConstructionObjectsTable;
+export default ShoppingMallTable;
