@@ -17,10 +17,10 @@ namespace Construction.Controllers
         private readonly ICityService _cityService;
         private readonly IConstructionObjectSerivce _constructionObjectSerivce;
         private readonly IExcelHelper _excelHelper;
-        public HomeController(IJobTitleService jobTitleService, 
-                              IWorkService workService, 
-                              IStatusService statusSerivce, 
-                              IClientService clientService, 
+        public HomeController(IJobTitleService jobTitleService,
+                              IWorkService workService,
+                              IStatusService statusSerivce,
+                              IClientService clientService,
                               IShoppingMallService shoppingMallService,
                               ICityService cityService,
                               IConstructionObjectSerivce constructionObjectSerivce,
@@ -83,8 +83,22 @@ namespace Construction.Controllers
         [HttpGet("GetClients")]
         public async Task<IActionResult> GetClients()
         {
-            var clients = await _clientService.GetAll();
+            var clients = await _clientService.GetAllAsync();
             return Ok(clients);
+        }
+
+        [HttpPost("UpdateClitents")]
+        public async Task<IActionResult> UpdateClients([FromBody] ClientDto model)
+        {
+            var result = await _clientService.UpdateAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("DeleteClitents")]
+        public async Task<IActionResult> DeleteClitents([FromBody] int id)
+        {
+            var result = await _clientService.DeleteAsync(id);
+            return Ok(result);
         }
 
         [HttpGet("GetShoppingMalls")]
