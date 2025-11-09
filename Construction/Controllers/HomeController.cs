@@ -1,4 +1,5 @@
-﻿using Construction.Models.Dtos;
+﻿using Construction.Models;
+using Construction.Models.Dtos;
 using Construction.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,15 @@ namespace Construction.Controllers
         private readonly IShoppingMallService _shoppingMallService;
         private readonly ICityService _cityService;
         private readonly IConstructionObjectSerivce _constructionObjectSerivce;
+        private readonly IExcelHelper _excelHelper;
         public HomeController(IJobTitleService jobTitleService, 
                               IWorkService workService, 
                               IStatusService statusSerivce, 
                               IClientService clientService, 
                               IShoppingMallService shoppingMallService,
                               ICityService cityService,
-                              IConstructionObjectSerivce constructionObjectSerivce)
+                              IConstructionObjectSerivce constructionObjectSerivce,
+                              IExcelHelper excelHelper)
         {
             _jobTitleService = jobTitleService;
             _workService = workService;
@@ -30,6 +33,7 @@ namespace Construction.Controllers
             _shoppingMallService = shoppingMallService;
             _cityService = cityService;
             _constructionObjectSerivce = constructionObjectSerivce;
+            _excelHelper = excelHelper;
         }
 
         [HttpGet("GetTitles")]
@@ -123,6 +127,15 @@ namespace Construction.Controllers
         {
             var result = await _constructionObjectSerivce.DeleteAsync(id);
             return Ok(result);
+        }
+
+        [HttpPost("DownloadExcel")]
+        public async Task<IActionResult> DownloadExcel([FromBody] DownloadExcelRequest request)
+        {
+            var works = await _workService.GetByDateRange(request.DateFrom, request.DateTo);
+            var stream = _excelHelper.GenerateDetailing(works);
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "objects.xlsx");
         }
     }
 }

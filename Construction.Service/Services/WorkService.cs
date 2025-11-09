@@ -29,6 +29,18 @@ namespace Construction.Service.Services
             return WorkMapping.Map(result);
         }
 
+        public async Task<List<WorkDto>> GetByDateRange(DateOnly dateFrom, DateOnly dateTo)
+        {
+            var result = await GetAllAsync();
+
+            var filteredResult = result.Where(x => x.Status!.Name == "Закрыт" &&
+                                                   x.CompletionDate >= dateFrom &&
+                                                   x.CompletionDate <= dateTo)
+                                       .ToList();
+
+            return filteredResult;
+        }
+
         public async Task<string> UpdateWork(WorkDto model)
         {
             if (model?.Id == null || model.Id == 0) return "400";

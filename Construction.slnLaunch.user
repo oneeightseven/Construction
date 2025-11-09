@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "Новый профиль",
+    "Projects": [
+      {
+        "Path": "Construction\\Construction.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

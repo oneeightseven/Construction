@@ -1,4 +1,5 @@
-﻿using Construction.Service.Interfaces;
+﻿using Construction.Service.Helpers;
+using Construction.Service.Interfaces;
 using Construction.Service.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,6 +9,7 @@ namespace Construction.Service
     {
         public static IServiceCollection AddConstructionServices(this IServiceCollection services)
         {
+            //DB containers
             services.AddScoped<IJobTitleService, JobTitleService>();
             services.AddScoped<IWorkService, WorkService>();
             services.AddScoped<IStatusService, StatusService>();
@@ -15,6 +17,10 @@ namespace Construction.Service
             services.AddScoped<IShoppingMallService, ShoppingMallService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IConstructionObjectSerivce, ConstructionObjectSerivce>();
+
+            //Another containers
+            services.AddScoped<IExcelHelper, ExcelHelper>();
+
             return services;
         }
     }
