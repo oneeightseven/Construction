@@ -119,7 +119,7 @@ namespace Construction.Controllers
         }
 
         [HttpPost("DeleteConstructionObject")]
-        public async Task<IActionResult> DeleteConstructionObject(int id)
+        public async Task<IActionResult> DeleteConstructionObject([FromBody] int id)
         {
             var result = await _constructionObjectSerivce.DeleteAsync(id);
             return Ok(result);

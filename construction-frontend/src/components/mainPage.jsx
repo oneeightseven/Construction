@@ -6,6 +6,8 @@ import clients from '../images/clients.png';
 import shoppingMalls from '../images/shoppingMalls.png';
 import objects from '../images/objects.png';
 import dogovor from '../images/dogovor.png';
+import ConstructionObjectsTable from "./tables/constructionObjectsTable";
+import { useBase } from './contexts/BaseContext';
 import "./mainPage.css"
 
 const MainPage = ({ }) => {
@@ -14,6 +16,8 @@ const MainPage = ({ }) => {
   const [strictSearch, setStrictSearch] = useState(false);
   const [searchMode, setSearchMode] = useState('AND');
   const [selectedWork, setSelectedWork] = useState(null);
+
+  const { currentTable, setCurrentTable } = useBase();
 
   const handleSearch = (filters, isStrict, mode) => {
     console.log('Получены фильтры:', filters, 'Строгий поиск:', isStrict, 'Режим:', mode);
@@ -30,30 +34,35 @@ const MainPage = ({ }) => {
     setSelectedWork(null);
   }
 
+  const setCurrentTableFunc = (tableName) => {
+    setCurrentTable(tableName);
+    setSelectedWork(null);
+  } 
+
   return (
     <>
       <div>
         <div className="row header">
           <div className="col-1">
-            <div className="icon-with-text">
+            <div onClick={() => setCurrentTableFunc("Clients")} className="icon-with-text">
               <img src={clients} />
               <span>Клиенты</span>
             </div>
           </div>
           <div className="col-1">
-            <div className="icon-with-text">
+            <div onClick={() => setCurrentTableFunc("ShoppingMalls")}  className="icon-with-text">
               <img src={shoppingMalls} />
               <span>Торговые центры</span>
             </div>
           </div>
           <div className="col-1">
-            <div className="icon-with-text">
+            <div onClick={() => setCurrentTableFunc("Objects")}  className="icon-with-text">
               <img src={objects} />
               <span>Объекты</span>
             </div>
           </div>
           <div className="col-1">
-            <div className="icon-with-text">
+            <div onClick={() => setCurrentTableFunc("Details")} className="icon-with-text">
               <img src={dogovor} />
               <span>Детализация</span>
             </div>
@@ -61,7 +70,8 @@ const MainPage = ({ }) => {
         </div>
       </div>
       <div className="container-fluid default-bg" style={{ marginTop: '20px' }}>
-        <div className="row">
+        {!currentTable ? (
+          <div className="row">
           {!selectedWork ? (
             <>
               <div className="col-3">
@@ -85,6 +95,12 @@ const MainPage = ({ }) => {
             {/* Дополнительная информация */}
           </div>
         </div>
+        ):(
+          <>
+            {currentTable === "Objects" && <ConstructionObjectsTable/>}
+          </>
+        )}
+        
       </div>
     </>
 
