@@ -94,6 +94,20 @@ namespace Construction.Controllers
             return Ok(shoppingMalls);
         }
 
+        [HttpPost("UpdateShoppingMalls")]
+        public async Task<IActionResult> UpdateShoppingMalls([FromBody] ShoppingMallDto model)
+        {
+            var result = await _shoppingMallService.UpdateAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("DeleteShoppingMalls")]
+        public async Task<IActionResult> DeleteShoppingMalls(int id)
+        {
+            var result = await _shoppingMallService.DeleteAsync(id);
+            return Ok(result);
+        }
+
         [HttpGet("GetCities")]
         public async Task<IActionResult> GetCities()
         {
