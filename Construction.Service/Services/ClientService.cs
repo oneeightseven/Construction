@@ -22,24 +22,24 @@ namespace Construction.Service.Services
             return result;
         }
 
-    public async Task<string> UpdateAsync(ClientDto obj)
+    public async Task<string> UpdateAsync(ClientDto client)
         {
-            if (obj.Id == 0)
+            if (client.Id == 0)
             {
                 Client dbclient = new()
                 {
-                    Name = obj.Name
+                    Name = client.Name
                 };
 
                 await _context.Clients.AddAsync(dbclient);
             }
             else
             {
-                var dbclient = await _context.Clients.FindAsync(obj.Id);
+                var dbclient = await _context.Clients.FindAsync(client.Id);
 
                 if (dbclient == null) return "404";
 
-                dbclient.Name = obj.Name;
+                dbclient.Name = client.Name;
             }
 
             var result = await _context.SaveChangesAsync();

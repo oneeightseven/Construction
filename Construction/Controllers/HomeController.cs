@@ -88,14 +88,14 @@ namespace Construction.Controllers
         }
 
         [HttpPost("UpdateClitents")]
-        public async Task<IActionResult> UpdateClients([FromBody] ClientDto model)
+        public async Task<IActionResult> UpdateClient([FromBody] ClientDto model)
         {
             var result = await _clientService.UpdateAsync(model);
             return Ok(result);
         }
 
         [HttpPost("DeleteClitents")]
-        public async Task<IActionResult> DeleteClitents([FromBody] int id)
+        public async Task<IActionResult> DeleteClitent([FromBody] int id)
         {
             var result = await _clientService.DeleteAsync(id);
             return Ok(result);
