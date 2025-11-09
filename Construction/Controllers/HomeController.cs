@@ -14,12 +14,14 @@ namespace Construction.Controllers
         private readonly IClientService _clientService;
         private readonly IShoppingMallService _shoppingMallService;
         private readonly ICityService _cityService;
+        private readonly IConstructionObjectSerivce _constructionObjectSerivce;
         public HomeController(IJobTitleService jobTitleService, 
                               IWorkService workService, 
                               IStatusService statusSerivce, 
                               IClientService clientService, 
                               IShoppingMallService shoppingMallService,
-                              ICityService cityService)
+                              ICityService cityService,
+                              IConstructionObjectSerivce constructionObjectSerivce)
         {
             _jobTitleService = jobTitleService;
             _workService = workService;
@@ -27,6 +29,7 @@ namespace Construction.Controllers
             _clientService = clientService;
             _shoppingMallService = shoppingMallService;
             _cityService = cityService;
+            _constructionObjectSerivce = constructionObjectSerivce;
         }
 
         [HttpGet("GetTitles")]
@@ -98,6 +101,27 @@ namespace Construction.Controllers
         public async Task<IActionResult> UpdateWork([FromBody] WorkDto model)
         {
             var result = await _workService.UpdateWork(model);
+            return Ok(result);
+        }
+
+        [HttpGet("GetConstructionObjects")]
+        public async Task<IActionResult> GetConstructionObjects()
+        {
+            var result = await _constructionObjectSerivce.GetAllAsync();
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateConstructionObject")]
+        public async Task<IActionResult> UpdateConstructionObject([FromBody] ConstructionObjectDto model)
+        {
+            var result = await _constructionObjectSerivce.UpdateAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("DeleteConstructionObject")]
+        public async Task<IActionResult> DeleteConstructionObject(int id)
+        {
+            var result = await _constructionObjectSerivce.DeleteAsync(id);
             return Ok(result);
         }
     }
