@@ -1,6 +1,7 @@
 ﻿using Construction.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Construction.Service;
+using Construction.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"),
         b => b.MigrationsAssembly("Construction.Service")
     ));
+
+builder.Services.AddSingleton<IMinioCacheService>(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    return new MinioCacheService(configuration);
+});
 
 builder.Services.AddCors(options =>
 {

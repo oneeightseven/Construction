@@ -1,4 +1,5 @@
 ﻿using Construction.Models.Dtos;
+using Construction.Models.Models;
 using Construction.Service.Contexts;
 using Construction.Service.Interfaces;
 using Construction.Service.Mapping;
@@ -9,24 +10,39 @@ namespace Construction.Service.Services
     public class WorkService : IWorkService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMinioCacheService _minioCache;
 
-        public WorkService(ApplicationDbContext context)
+        public WorkService(ApplicationDbContext context, IMinioCacheService minioCache)
         {
             _context = context;
+            _minioCache = minioCache;
         }
         
         public async Task<List<WorkDto>> GetAllAsync()
         {
-            var result = await _context.Works.Include(x => x.Brand)
-                                             .Include(x => x.City)
-                                             .Include(x => x.ShoppingMall)
-                                             .Include(x => x.Client)
-                                             .Include(x => x.Status)
-                                             .Include(x => x.ConstructionObject)
-                                             .Include(x => x.Employee)
-                                             .ToListAsync();
+            string cacheKey = "test";
 
-            return WorkMapping.Map(result);
+            var cache = await _minioCache.GetAsync<List<WorkDto>>(cacheKey);
+            if (cache != null)
+            {
+                return cache;
+            }
+            else
+            {
+                var result = await _context.Works.Include(x => x.Brand)
+                                                 .Include(x => x.City)
+                                                 .Include(x => x.ShoppingMall)
+                                                 .Include(x => x.Client)
+                                                 .Include(x => x.Status)
+                                                 .Include(x => x.ConstructionObject)
+                                                 .Include(x => x.Employee)
+                                                 .ToListAsync();
+
+                var resultDto = WorkMapping.Map(result);
+                await _minioCache.SetAsync(cacheKey, resultDto, TimeSpan.FromMinutes(30));
+
+                return resultDto;
+            }
         }
 
         public async Task<List<WorkDto>> GetByDateRange(DateOnly dateFrom, DateOnly dateTo)
