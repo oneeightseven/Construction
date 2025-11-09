@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './clientsTable.css';
-import { clientSerivce } from '../../services/clientService';
+import { clientSerivce } from '../../services/clientSerivce';
 import ClientForm from '../forms/clientForm';
 
 const ClientsTable = () => {

@@ -6,6 +6,7 @@ import clients from '../images/clients.png';
 import shoppingMalls from '../images/shoppingMalls.png';
 import objects from '../images/objects.png';
 import dogovor from '../images/dogovor.png';
+import ClientsTable from "./tables/clientsTable";
 import ConstructionObjectsTable from "./tables/constructionObjectsTable";
 import ExcelExportForm from "./forms/excelExportForm";
 import { useBase } from './contexts/BaseContext';
@@ -100,6 +101,7 @@ const MainPage = ({ }) => {
           <>
             {currentTable === "Objects" && <ConstructionObjectsTable/>}
             {currentTable === "Details" && <ExcelExportForm/>}
+            {currentTable === "Clients" && <ClientsTable/>}
           </>
         )}
         
