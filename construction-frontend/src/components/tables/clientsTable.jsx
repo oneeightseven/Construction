@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './clientsTable.css';
-import { clientSerivce } from '../../services/clientSerivce';
+import { clientService } from '../../services/clientService';
 import ClientForm from '../forms/clientForm';
 
 const ClientsTable = () => {
@@ -18,7 +18,7 @@ const ClientsTable = () => {
 
   const fetchClients = () => {
     setLoading(true);
-    clientSerivce.getAll()
+    clientService.getAll()
       .then(response => {
         setClients(response || []);
       })
@@ -32,7 +32,7 @@ const ClientsTable = () => {
 
   const handleDelete = (id, name) => {
     if (window.confirm(`Вы уверены, что хотите удалить клиента "${name}"?`)) {
-      clientSerivce.delete(id)
+      clientService.delete(id)
         .then(() => {
           setClients(prev => prev.filter(obj => obj.id !== id));
           toast.success(`Клиент "${name}" успешно удален`);
