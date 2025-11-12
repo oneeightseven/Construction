@@ -4,8 +4,8 @@ class ClientService {
     async getAll() {
         return await apiService.get('Home/GetClients');
     }
-     async update(client) {
-        return await apiService.post('Home/UpdateClients', client);
+     async update(obj) {
+        return await apiService.post('Home/UpdateClients', obj);
     }
 
     async delete(id) {

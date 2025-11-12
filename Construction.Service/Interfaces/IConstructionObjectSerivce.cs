@@ -2,7 +2,7 @@
 
 namespace Construction.Service.Interfaces
 {
-    public interface IConstructionObjectSerivce
+    public interface IConstructionObjectService
     {
         public Task<List<ConstructionObjectDto>> GetAllAsync();
         Task<string> UpdateAsync(ConstructionObjectDto obj);
