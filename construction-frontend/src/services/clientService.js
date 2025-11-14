@@ -5,11 +5,11 @@ class ClientService {
         return await apiService.get('Home/GetClients');
     }
      async update(obj) {
-        return await apiService.post('Home/UpdateClients', obj);
+        return await apiService.post('Home/UpdateClient', obj);
     }
 
     async delete(id) {
-        return await apiService.post('Home/DeleteClients', id);
+        return await apiService.post('Home/DeleteClient', id);
     }
 }
 
