@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Minio;
 using Minio.DataModel.Args;
+using Minio.Exceptions;
+using System.Globalization;
 using System.Text.Json;
 
 public class MinioCacheService : IMinioCacheService
@@ -13,9 +15,7 @@ public class MinioCacheService : IMinioCacheService
     public MinioCacheService(string endpoint, string accessKey, string secretKey, string bucketName = "cache")
     {
         _minioClient = new MinioClient().WithEndpoint(endpoint).WithCredentials(accessKey, secretKey).WithSSL(false).Build();
-
         _bucketName = bucketName;
-
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -30,27 +30,34 @@ public class MinioCacheService : IMinioCacheService
     {
         try
         {
-            using var stream = new MemoryStream();
+            var stat = await _minioClient.StatObjectAsync(
+                new StatObjectArgs()
+                    .WithBucket(_bucketName)
+                    .WithObject(key)
+            );
 
-            var getArgs = new GetObjectArgs().WithBucket(_bucketName).WithObject(key).WithCallbackStream(s => s.CopyTo(stream));
-
-            await _minioClient.GetObjectAsync(getArgs);
-
-            var jsonString = System.Text.Encoding.UTF8.GetString(stream.ToArray());
-            var cacheItem = JsonSerializer.Deserialize<CacheItem<T>>(jsonString, _jsonOptions);
-
-            if (cacheItem == null || cacheItem.IsExpired)
+            if (stat.MetaData.TryGetValue("expires-at", out var expiresAtStr) &&
+                DateTime.TryParse(expiresAtStr, out var expiresAt) &&
+                expiresAt < DateTime.UtcNow)
             {
-                if (cacheItem != null)
-                {
-                    await RemoveAsync(key);
-                }
+                await RemoveAsync(key);
                 return default(T);
             }
 
-            return cacheItem.Data;
+            using var stream = new MemoryStream();
+            await _minioClient.GetObjectAsync(
+                new GetObjectArgs()
+                    .WithBucket(_bucketName)
+                    .WithObject(key)
+                    .WithCallbackStream(async s => await s.CopyToAsync(stream))
+            );
+
+            stream.Position = 0;
+            var jsonString = await new StreamReader(stream).ReadToEndAsync();
+
+            return JsonSerializer.Deserialize<T>(jsonString, _jsonOptions);
         }
-        catch (Exception ex) when (ex.Message.Contains("NoSuchKey"))
+        catch (ObjectNotFoundException)
         {
             return default(T);
         }
@@ -61,18 +68,19 @@ public class MinioCacheService : IMinioCacheService
         }
     }
 
-    public async Task SetAsync<T>(string key, T data, TimeSpan maxLifetime)
+    public async Task SetAsync<T>(string key, T data, int days = 90)
     {
         try
         {
-            var cacheItem = new CacheItem<T>
+            var ttl = TimeSpan.FromDays(days);
+            var expiration = DateTime.UtcNow.Add(ttl);
+
+            var metadata = new Dictionary<string, string>
             {
-                Data = data,
-                CachedAt = DateTime.UtcNow,
-                MaxLifetime = maxLifetime
+                ["expires-at"] = expiration.ToString("O"),
             };
 
-            var jsonString = JsonSerializer.Serialize(cacheItem, _jsonOptions);
+            var jsonString = JsonSerializer.Serialize(data, _jsonOptions);
             var bytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
 
             using var stream = new MemoryStream(bytes);
@@ -82,7 +90,8 @@ public class MinioCacheService : IMinioCacheService
                 .WithObject(key)
                 .WithStreamData(stream)
                 .WithObjectSize(bytes.Length)
-                .WithContentType("application/json");
+                .WithContentType("application/json")
+                .WithHeaders(metadata);
 
             await _minioClient.PutObjectAsync(putArgs);
         }
@@ -137,15 +146,6 @@ public class MinioCacheService : IMinioCacheService
         {
             Console.WriteLine($"Error creating bucket: {ex.Message}");
         }
-    }
-
-    private class CacheItem<T>
-    {
-        public T Data { get; set; }
-        public DateTime CachedAt { get; set; }
-        public TimeSpan MaxLifetime { get; set; }
-
-        public bool IsExpired => DateTime.UtcNow > CachedAt + MaxLifetime;
     }
 }
 

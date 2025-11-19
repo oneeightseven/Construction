@@ -39,7 +39,7 @@ namespace Construction.Service.Services
                                                  .ToListAsync();
 
                 var resultDto = WorkMapping.Map(result);
-                await _minioCache.SetAsync(cacheKey, resultDto, TimeSpan.FromMinutes(30));
+                await _minioCache.SetAsync(cacheKey, resultDto, 1);
 
                 return resultDto;
             }
