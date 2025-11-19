@@ -6,6 +6,7 @@ import clients from '../images/clients.png';
 import shoppingMalls from '../images/shoppingMalls.png';
 import objects from '../images/objects.png';
 import dogovor from '../images/dogovor.png';
+import ClientsTable from "./tables/clientsTable";
 import ConstructionObjectsTable from "./tables/constructionObjectsTable";
 import ShoppingMallTable from "./tables/shoppingMallTable";
 import ExcelExportForm from "./forms/excelExportForm";
@@ -101,7 +102,8 @@ const MainPage = ({ }) => {
           <>
             {currentTable === "Objects" && <ConstructionObjectsTable/>}
             {currentTable === "Details" && <ExcelExportForm/>}
-            {currentTable === "ShoppingMalls" && <ShoppingMallTable/>}
+            {currentTable === "ShoppingMalls" && <ShoppingMallTable />}
+            {currentTable === "Clients" && <ClientsTable/>}
           </>
         )}
         

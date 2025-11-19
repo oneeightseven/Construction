@@ -1,6 +1,7 @@
 ﻿using Construction.Models;
 using Construction.Models.Dtos;
 using Construction.Service.Interfaces;
+using Construction.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Construction.Controllers
@@ -11,28 +12,28 @@ namespace Construction.Controllers
     {
         private readonly IJobTitleService _jobTitleService;
         private readonly IWorkService _workService;
-        private readonly IStatusService _statusSerivce;
+        private readonly IStatusService _statusService;
         private readonly IClientService _clientService;
         private readonly IShoppingMallService _shoppingMallService;
         private readonly ICityService _cityService;
-        private readonly IConstructionObjectSerivce _constructionObjectSerivce;
+        private readonly IConstructionObjectService _constructionObjectService;
         private readonly IExcelHelper _excelHelper;
-        public HomeController(IJobTitleService jobTitleService, 
-                              IWorkService workService, 
-                              IStatusService statusSerivce, 
-                              IClientService clientService, 
+        public HomeController(IJobTitleService jobTitleService,
+                              IWorkService workService,
+                              IStatusService statusService,
+                              IClientService clientService,
                               IShoppingMallService shoppingMallService,
                               ICityService cityService,
-                              IConstructionObjectSerivce constructionObjectSerivce,
+                              IConstructionObjectService constructionObjectService,
                               IExcelHelper excelHelper)
         {
             _jobTitleService = jobTitleService;
             _workService = workService;
-            _statusSerivce = statusSerivce;
+            _statusService = statusService;
             _clientService = clientService;
             _shoppingMallService = shoppingMallService;
             _cityService = cityService;
-            _constructionObjectSerivce = constructionObjectSerivce;
+            _constructionObjectService = constructionObjectService;
             _excelHelper = excelHelper;
         }
 
@@ -76,15 +77,29 @@ namespace Construction.Controllers
         [HttpGet("GetStatuses")]
         public async Task<IActionResult> GetStatuses()
         {
-            var statuses = await _statusSerivce.GetAllAsync();
+            var statuses = await _statusService.GetAllAsync();
             return Ok(statuses);
         }
 
         [HttpGet("GetClients")]
         public async Task<IActionResult> GetClients()
         {
-            var clients = await _clientService.GetAll();
+            var clients = await _clientService.GetAllAsync();
             return Ok(clients);
+        }
+
+        [HttpPost("UpdateClient")]
+        public async Task<IActionResult> UpdateClient([FromBody] ClientDto model)
+        {
+            var result = await _clientService.UpdateAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("DeleteClient")]
+        public async Task<IActionResult> DeleteClient([FromBody] int id)
+        {
+            var result = await _clientService.DeleteAsync(id);
+            return Ok(result);
         }
 
         [HttpGet("GetShoppingMalls")]
@@ -125,21 +140,21 @@ namespace Construction.Controllers
         [HttpGet("GetConstructionObjects")]
         public async Task<IActionResult> GetConstructionObjects()
         {
-            var result = await _constructionObjectSerivce.GetAllAsync();
+            var result = await _constructionObjectService.GetAllAsync();
             return Ok(result);
         }
 
         [HttpPost("UpdateConstructionObject")]
         public async Task<IActionResult> UpdateConstructionObject([FromBody] ConstructionObjectDto model)
         {
-            var result = await _constructionObjectSerivce.UpdateAsync(model);
+            var result = await _constructionObjectService.UpdateAsync(model);
             return Ok(result);
         }
 
         [HttpPost("DeleteConstructionObject")]
         public async Task<IActionResult> DeleteConstructionObject([FromBody] int id)
         {
-            var result = await _constructionObjectSerivce.DeleteAsync(id);
+            var result = await _constructionObjectService.DeleteAsync(id);
             return Ok(result);
         }
 

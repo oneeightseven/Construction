@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Construction.Service.Services
 {
-    public class ConstructionObjectSerivce : IConstructionObjectSerivce
+    public class ConstructionObjectService : IConstructionObjectService
     {
         private readonly ApplicationDbContext _context;
 
-        public ConstructionObjectSerivce(ApplicationDbContext context)
+        public ConstructionObjectService(ApplicationDbContext context)
         {
             _context = context;
         }
