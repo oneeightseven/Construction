@@ -50,6 +50,7 @@ const ClientsTable = () => {
   };
 
   const handleAddClient = () => {
+    setUpdateModel(null);
     setIsUpdateMode(true);
   };
 
@@ -99,7 +100,7 @@ const ClientsTable = () => {
                   ) : (
                     <div className="table-responsive">
                       {clients.map((client) => (
-                        <div key={client.id} className="client-row row align-items-center py-3 border-bottom" onClick={() => handleClick(client)}>
+                        <div key={client.id} className="client-row row align-items-center py-3 border-bottom" onDoubleClick={() => handleClick(client)}>
                           <div className="col-1 text-center">
                             <span className="client-id badge bg-light text-dark">
                               #{client.id}

@@ -100,7 +100,7 @@ const ConstructionObjectsTable = () => {
                   ) : (
                     <div className="table-responsive">
                       {objects.map((object) => (
-                        <div key={object.id} className="construction-row row align-items-center py-3 border-bottom" onClick={() => handleClick(object)}>
+                        <div key={object.id} className="construction-row row align-items-center py-3 border-bottom" onDoubleClick={() => handleClick(object)}>
                           <div className="col-1 text-center">
                             <span className="object-id badge bg-light text-dark">
                               #{object.id}
