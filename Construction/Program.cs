@@ -1,9 +1,14 @@
-﻿using Construction.Service.Contexts;
-using Microsoft.EntityFrameworkCore;
-using Construction.Service;
+﻿using Construction.Service;
+using Construction.Service.Contexts;
 using Construction.Service.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
