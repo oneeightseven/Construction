@@ -1,26 +1,52 @@
 ﻿using Construction.Models.Dtos;
 using Construction.Models.Models;
 using Construction.Service.Contexts;
+using Construction.Service.Extensions;
 using Construction.Service.Interfaces;
 using Construction.Service.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Construction.Service.Services
 {
     public class ConstructionObjectService : IConstructionObjectService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMinioCacheService _minioCache;
+        private readonly ILogger<WorkService> _logger;
 
-        public ConstructionObjectService(ApplicationDbContext context)
+        public ConstructionObjectService(ApplicationDbContext context, IMinioCacheService minioCache, ILogger<WorkService> logger)
         {
             _context = context;
+            _minioCache = minioCache;
+            _logger = logger;
         }
 
         public async Task<List<ConstructionObjectDto>> GetAllAsync()
         {
-            var result = await _context.ConstructionObjects.ToListAsync();
+            List<ConstructionObjectDto> result = new();
+            try
+            {
+                var cache = await _minioCache.GetAsync<List<ConstructionObjectDto>>(CacheConstants.ALL_CONSTRUCTION_OBJECTS);
+                if (cache != null)
+                {
+                    result = cache;
+                }
+                else
+                {
+                    var objects = await _context.ConstructionObjects.ToListAsync();
+                    result = ConstructionObjectMapping.Map(objects);
+                    await _minioCache.SetAsync(CacheConstants.ALL_CONSTRUCTION_OBJECTS, result);
+                }
 
-            return ConstructionObjectMapping.Map(result);
+                _logger.LogInformation("Successful receipt of constructionObjects");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to receive constructionObjects {ex.Message}");
+                return result;
+            }
         }
 
         public async Task<string> UpdateAsync(ConstructionObjectDto obj)

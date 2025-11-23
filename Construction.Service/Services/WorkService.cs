@@ -1,5 +1,6 @@
 ﻿using Construction.Models.Dtos;
 using Construction.Service.Contexts;
+using Construction.Service.Extensions;
 using Construction.Service.Interfaces;
 using Construction.Service.Mapping;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +23,10 @@ namespace Construction.Service.Services
         
         public async Task<List<WorkDto>> GetAllAsync()
         {
-            string cacheKey = "allWorks";
             List<WorkDto> result = new();
             try
             {
-                var cache = await _minioCache.GetAsync<List<WorkDto>>(cacheKey);
+                var cache = await _minioCache.GetAsync<List<WorkDto>>(CacheConstants.ALL_WORKS);
                 if (cache != null)
                 {
                     result = cache;
@@ -43,7 +43,7 @@ namespace Construction.Service.Services
                                                      .ToListAsync();
 
                     result = WorkMapping.Map(works);
-                    await _minioCache.SetAsync(cacheKey, result, 1);
+                    await _minioCache.SetAsync(CacheConstants.ALL_WORKS, result);
                 }
 
                 _logger.LogInformation("Successful receipt of works");

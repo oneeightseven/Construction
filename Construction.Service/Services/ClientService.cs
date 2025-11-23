@@ -1,9 +1,11 @@
 ﻿using Construction.Models.Dtos;
+using Construction.Models.Models;
 using Construction.Service.Contexts;
+using Construction.Service.Extensions;
 using Construction.Service.Interfaces;
 using Construction.Service.Mapping;
 using Microsoft.EntityFrameworkCore;
-using Construction.Models.Models;
+using Microsoft.Extensions.Logging;
 
 
 namespace Construction.Service.Services
@@ -11,17 +13,41 @@ namespace Construction.Service.Services
     public class ClientService : IClientService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMinioCacheService _minioCache;
+        private readonly ILogger<WorkService> _logger;
 
-        public ClientService(ApplicationDbContext context)
+        public ClientService(ApplicationDbContext context, IMinioCacheService minioCache, ILogger<WorkService> logger)
         {
             _context = context;
+            _minioCache = minioCache;
+            _logger = logger;
         }
 
         public async Task<List<ClientDto>> GetAllAsync()
         {
-            var result = await _context.Clients.ToListAsync();
+            List<ClientDto> result = new();
+            try
+            {
+                var cache = await _minioCache.GetAsync<List<ClientDto>>(CacheConstants.ALL_CLIENTS);
+                if (cache != null)
+                {
+                    result = cache;
+                }
+                else
+                {
+                    var clients = await _context.Clients.ToListAsync();
+                    result = ClientMapping.Map(clients);
+                    await _minioCache.SetAsync(CacheConstants.ALL_CLIENTS, result);
+                }
 
-            return ClientMapping.Map(result);
+                _logger.LogInformation("Successful receipt of clients");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to receive clients {ex.Message}");
+                return result;
+            }
         }
 
 
