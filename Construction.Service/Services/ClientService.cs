@@ -2,11 +2,13 @@
 using Construction.Models.Models;
 using Construction.Service.Contexts;
 using Construction.Service.Extensions;
+using Construction.Service.Helpers;
 using Construction.Service.Interfaces;
 using Construction.Service.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
+using static Construction.Service.Extensions.ResponseConstants;
 
 namespace Construction.Service.Services
 {
@@ -40,12 +42,12 @@ namespace Construction.Service.Services
                     await _minioCache.SetAsync(CacheConstants.ALL_CLIENTS, result);
                 }
 
-                _logger.LogInformation("Successful receipt of clients");
+                _logger.LogInformation(LogHelper.SuccessGet("clients"));
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to receive clients {ex.Message}");
+                _logger.LogCritical(LogHelper.BadGet("clients"), ex.Message);
                 return result;
             }
         }
@@ -53,40 +55,88 @@ namespace Construction.Service.Services
 
         public async Task<string> UpdateAsync(ClientDto client)
         {
-            if (client.Id == 0)
+            try
             {
-                Client dbClient = new()
+                if (client.Id == 0)
                 {
-                    Name = client.Name
-                };
+                    Client dbClient = new()
+                    {
+                        Name = client.Name
+                    };
 
-                await _context.Clients.AddAsync(dbClient);
+                    await _context.Clients.AddAsync(dbClient);
+                }
+                else
+                {
+                    var dbClient = await _context.Clients.FindAsync(client.Id);
+
+                    if (dbClient == null)
+                    {
+                        _logger.LogError(LogHelper.NotFoundMessage("client", client.Id));
+                        return NotFound;
+                    }
+
+                    dbClient.Name = client.Name;
+                }
+
+                var result = await _context.SaveChangesAsync();
+
+                if (result == 1)
+                {
+                    await _minioCache.RemoveAsync(CacheConstants.ALL_CLIENTS);
+
+                    _logger.LogInformation(LogHelper.SuccessUpdate("client", client.Id));
+
+                    return OK;
+                }
+                else
+                {
+                    _logger.LogError(LogHelper.BadRequest("client", client.Id));
+                    return BadRequest;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var dbClient = await _context.Clients.FindAsync(client.Id);
-
-                if (dbClient == null) return "404";
-
-                dbClient.Name = client.Name;
+                _logger.LogCritical(LogHelper.BadRequest("client", client.Id), ex.Message);
+                return BadRequest;
             }
-
-            var result = await _context.SaveChangesAsync();
-
-            return result == 1 ? "200" : "500";
         }
 
         public async Task<string> DeleteAsync(int id)
         {
-            var client = await _context.Clients.FindAsync(id);
+            try
+            {
+                var client = await _context.Clients.FindAsync(id);
 
-            if (client == null) return "404";
+                if (client == null)
+                {
+                    _logger.LogError(LogHelper.NotFoundMessage("client", id));
+                    return NotFound;
+                }
 
-            _context.Clients.Remove(client);
+                _context.Clients.Remove(client);
 
-            var result = await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync();
 
-            return result == 1 ? "200" : "500";
+                if (result == 1)
+                {
+                    await _minioCache.RemoveAsync(CacheConstants.ALL_CLIENTS);
+
+                    _logger.LogInformation(LogHelper.SuccessRemove("client", id));
+
+                    return OK;
+                }
+                else
+                {
+                    _logger.LogError(LogHelper.BadRequest("client", id));
+                    return BadRequest;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(LogHelper.BadRequest("client", id), ex.Message);
+                return BadRequest;
+            }
         }
     }
 }

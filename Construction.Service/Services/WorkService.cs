@@ -1,10 +1,14 @@
 ﻿using Construction.Models.Dtos;
+using Construction.Models.Models;
 using Construction.Service.Contexts;
 using Construction.Service.Extensions;
+using Construction.Service.Helpers;
 using Construction.Service.Interfaces;
 using Construction.Service.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
+using static Construction.Service.Extensions.ResponseConstants;
 
 namespace Construction.Service.Services
 {
@@ -46,12 +50,12 @@ namespace Construction.Service.Services
                     await _minioCache.SetAsync(CacheConstants.ALL_WORKS, result);
                 }
 
-                _logger.LogInformation("Successful receipt of works");
+                _logger.LogInformation(LogHelper.SuccessGet("works"));
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to receive works {ex.Message}");
+                _logger.LogCritical(LogHelper.BadGet("works"));
                 return result;
             }
             
@@ -59,38 +63,76 @@ namespace Construction.Service.Services
 
         public async Task<List<WorkDto>> GetByDateRange(DateOnly dateFrom, DateOnly dateTo)
         {
-            var result = await GetAllAsync();
+            try
+            {
+                var result = await GetAllAsync();
 
-            var filteredResult = result.Where(x => x.Status!.Name == "Закрыт" &&
-                                                   x.CompletionDate >= dateFrom &&
-                                                   x.CompletionDate <= dateTo)
-                                       .ToList();
+                var filteredResult = result.Where(x => x.Status!.Name == "Закрыт" &&
+                                                       x.CompletionDate >= dateFrom &&
+                                                       x.CompletionDate <= dateTo)
+                                           .ToList();
 
-            return filteredResult;
+                return filteredResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("Something went wrong", ex.Message);
+                return default;
+            }
+            
         }
 
         public async Task<string> UpdateWork(WorkDto model)
         {
-            if (model?.Id == null || model.Id == 0) return "400";
+            try
+            {
+                if (model?.Id == null || model.Id == 0)
+                {
+                    _logger.LogError(LogHelper.NotFoundMessage("work", model.Id));
+                    return NotFound;
+                }
 
-            var existingWork = await _context.Works.FindAsync(model.Id);
-            if (existingWork == null) return "404";
+                var existingWork = await _context.Works.FindAsync(model.Id);
+                if (existingWork == null)
+                {
+                    _logger.LogError(LogHelper.NotFoundMessage("work", model.Id));
+                    return NotFound;
+                }
 
-            existingWork.BrandId = model.Brand!.Id;
-            existingWork.CityId = model.City!.Id;
-            existingWork.ClientId = model.Client!.Id;
-            existingWork.CompletionDate = model.CompletionDate;
-            existingWork.ConstructionObjectId = model.ConstructionObject!.Id;
-            existingWork.DateBid = model.DateBid;
-            existingWork.DateOfCreation = model.DateOfCreation;
-            existingWork.EmployeeId = model.Employee!.Id;
-            existingWork.ShoppingMallId = model.ShoppingMall!.Id;
-            existingWork.StatusId = model.Status!.Id;
-            existingWork.Summ = model.Summ;
-            existingWork.Term = model.Term;
+                existingWork.BrandId = model.Brand!.Id;
+                existingWork.CityId = model.City!.Id;
+                existingWork.ClientId = model.Client!.Id;
+                existingWork.CompletionDate = model.CompletionDate;
+                existingWork.ConstructionObjectId = model.ConstructionObject!.Id;
+                existingWork.DateBid = model.DateBid;
+                existingWork.DateOfCreation = model.DateOfCreation;
+                existingWork.EmployeeId = model.Employee!.Id;
+                existingWork.ShoppingMallId = model.ShoppingMall!.Id;
+                existingWork.StatusId = model.Status!.Id;
+                existingWork.Summ = model.Summ;
+                existingWork.Term = model.Term;
 
-            var result = await _context.SaveChangesAsync();
-            return result == 1 ? "200" : "500";
+                var result = await _context.SaveChangesAsync();
+                if (result == 1)
+                {
+                    await _minioCache.RemoveAsync(CacheConstants.ALL_WORKS);
+
+                    _logger.LogInformation(LogHelper.SuccessUpdate("work", model.Id));
+
+                    return OK;
+                }
+                else
+                {
+                    _logger.LogError(LogHelper.BadRequest("work", model.Id));
+                    return BadRequest;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(LogHelper.BadRequest("work", model.Id), ex.Message);
+                return BadRequest;
+            }
+            
         }
     }
 }

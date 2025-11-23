@@ -2,10 +2,13 @@
 using Construction.Models.Models;
 using Construction.Service.Contexts;
 using Construction.Service.Extensions;
+using Construction.Service.Helpers;
 using Construction.Service.Interfaces;
 using Construction.Service.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
+using static Construction.Service.Extensions.ResponseConstants;
 
 namespace Construction.Service.Services
 {
@@ -27,7 +30,7 @@ namespace Construction.Service.Services
             List<ShoppingMallDto> result = new();
             try
             {
-                var cache = await _minioCache.GetAsync<List<ShoppingMallDto>>(CacheConstants.ALL_CONSTRUCTION_OBJECTS);
+                var cache = await _minioCache.GetAsync<List<ShoppingMallDto>>(CacheConstants.ALL_SHOPPING_MALLS);
                 if (cache != null)
                 {
                     result = cache;
@@ -36,59 +39,108 @@ namespace Construction.Service.Services
                 {
                     var shoppingMalls = await _context.ShoppingMalls.ToListAsync();
                     result = ShoppingMallMapping.Map(shoppingMalls);
-                    await _minioCache.SetAsync(CacheConstants.ALL_CONSTRUCTION_OBJECTS, result);
+                    await _minioCache.SetAsync(CacheConstants.ALL_SHOPPING_MALLS, result);
                 }
 
-                _logger.LogInformation("Successful receipt of shoppingMalls");
+                _logger.LogInformation(LogHelper.SuccessGet("shoppingMalls"));
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to receive shoppingMalls {ex.Message}");
+                _logger.LogCritical(LogHelper.BadGet("shoppingMalls"), ex.Message);
                 return result;
             }
         }
 
         public async Task<string> UpdateAsync(ShoppingMallDto obj)
         {
-            if (obj.Id == 0)
+            try
             {
-                ShoppingMall shoppingMall = new()
+                if (obj.Id == 0)
                 {
-                    Name = obj.Name,
-                    Address = obj.Address,
-                    Contact = obj.Contact
-                };
+                    ShoppingMall shoppingMall = new()
+                    {
+                        Name = obj.Name,
+                        Address = obj.Address,
+                        Contact = obj.Contact
+                    };
 
-                await _context.ShoppingMalls.AddAsync(shoppingMall);
+                    await _context.ShoppingMalls.AddAsync(shoppingMall);
+                }
+                else
+                {
+                    var dbObject = await _context.ShoppingMalls.FindAsync(obj.Id);
+
+                    if (dbObject == null)
+                    {
+                        _logger.LogError(LogHelper.NotFoundMessage("ShoppingMall", obj.Id));
+                        return NotFound;
+                    }
+
+                    dbObject.Name = obj.Name;
+                    dbObject.Address = obj.Address;
+                    dbObject.Contact = obj.Contact;
+                }
+
+                var result = await _context.SaveChangesAsync();
+
+                if (result == 1)
+                {
+                    await _minioCache.RemoveAsync(CacheConstants.ALL_SHOPPING_MALLS);
+
+                    _logger.LogInformation(LogHelper.SuccessUpdate("ShoppingMall", obj.Id));
+
+                    return OK;
+                }
+                else
+                {
+                    _logger.LogError(LogHelper.BadRequest("ShoppingMall", obj.Id));
+                    return BadRequest;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var dbObject = await _context.ShoppingMalls.FindAsync(obj.Id);
-
-                if (dbObject == null) return "404";
-
-                dbObject.Name = obj.Name;
-                dbObject.Address = obj.Address;
-                dbObject.Contact = obj.Contact;
+                _logger.LogCritical(LogHelper.BadRequest("ShoppingMall", obj.Id), ex.Message);
+                return BadRequest;
             }
-
-            var result = await _context.SaveChangesAsync();
-
-            return result == 1 ? "200" : "500";
         }
 
         public async Task<string> DeleteAsync(int id)
         {
-            var obj = await _context.ShoppingMalls.FindAsync(id);
+            try
+            {
+                var obj = await _context.ShoppingMalls.FindAsync(id);
 
-            if (obj == null) return "404";
+                if (obj == null)
+                {
+                    _logger.LogError(LogHelper.NotFoundMessage("ShoppingMall", id));
+                    return NotFound;
+                }
 
-            _context.ShoppingMalls.Remove(obj);
+                _context.ShoppingMalls.Remove(obj);
 
-            var result = await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync();
 
-            return result == 1 ? "200" : "500";
+                if (result == 1)
+                {
+                    await _minioCache.RemoveAsync(CacheConstants.ALL_SHOPPING_MALLS);
+
+                    _logger.LogInformation(LogHelper.SuccessRemove("ShoppingMall", id));
+
+                    return OK;
+                }
+                else
+                {
+                    _logger.LogError(LogHelper.BadRequest("ShoppingMall", id));
+                    return BadRequest;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(LogHelper.BadRequest("ShoppingMall", id), ex.Message);
+                return BadRequest;
+            }
+            
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Construction.Models.Dtos;
 using Construction.Service.Contexts;
 using Construction.Service.Extensions;
+using Construction.Service.Helpers;
 using Construction.Service.Interfaces;
 using Construction.Service.Mapping;
 using Microsoft.EntityFrameworkCore;
@@ -36,12 +37,12 @@ namespace Construction.Service.Services
                     await _minioCache.SetAsync(CacheConstants.ALL_CITIES, result);
                 }
 
-                _logger.LogInformation("Successful receipt of cities");
+                _logger.LogInformation(LogHelper.SuccessGet("cities"));
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to receive cities {ex.Message}");
+                _logger.LogCritical(LogHelper.BadGet("cities"), ex.Message);
                 return result;
             }
         }
