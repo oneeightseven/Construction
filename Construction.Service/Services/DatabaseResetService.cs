@@ -1,0 +1,28 @@
+﻿using Construction.Service.Contexts;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
+
+public class DatabaseResetService
+{
+    private readonly ApplicationDbContext _dbContext;
+
+    private readonly string[] TABLE_NAMES = {"Checks", "Works", "Employees", "Brands", "Cities", "Clients", "ConstructionObjects", "ShoppingMalls", "Statuses", "JobTitle"};
+
+    public DatabaseResetService(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task ClearAllTablesAndResetIdentityAsync()
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync("SET session_replication_role = replica;");
+
+        foreach (var tableName in TABLE_NAMES)
+        {
+            await _dbContext.Database.ExecuteSqlRawAsync($"TRUNCATE TABLE \"{tableName}\" RESTART IDENTITY CASCADE;");
+        }
+
+        await _dbContext.Database.ExecuteSqlRawAsync("SET session_replication_role = DEFAULT;");
+
+    }
+}

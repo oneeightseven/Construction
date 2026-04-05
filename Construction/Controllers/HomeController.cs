@@ -48,30 +48,7 @@ namespace Construction.Controllers
         public async Task<IActionResult> GetWorks()
         {
             var works = await _workService.GetAllAsync();
-            var firstWork = works.First();
-
-            List<WorkDto> moq = new();
-            for (int index = 1; index < 300; index++)
-            {
-                moq.Add(new WorkDto
-                {
-                    Id = index,
-                    DateBid = firstWork.DateBid,
-                    Term = firstWork.Term,
-                    CompletionDate = firstWork.CompletionDate,
-                    City = firstWork.City,
-                    ShoppingMall = firstWork.ShoppingMall,
-                    Brand = firstWork.Brand,
-                    Status = firstWork.Status,
-                    ConstructionObject = firstWork.ConstructionObject,
-                    Client = firstWork.Client,
-                    DateOfCreation = firstWork.DateOfCreation,
-                    Summ = firstWork.Summ,
-                    Employee = firstWork.Employee
-                });
-            }
-
-            return Ok(moq);
+            return Ok(works);
         }
 
         [HttpGet("GetStatuses")]

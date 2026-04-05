@@ -1,6 +1,7 @@
 ﻿using Construction.Service;
 using Construction.Service.Contexts;
 using Construction.Service.Interfaces;
+using Construction.Service.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -21,6 +22,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"),
         b => b.MigrationsAssembly("Construction.Service")
     ));
+
+builder.Services.AddScoped<DatabaseResetService>();
+builder.Services.AddHostedService<DatabaseInitializer>();
 
 builder.Services.AddSingleton<IMinioCacheService>(provider =>
 {
