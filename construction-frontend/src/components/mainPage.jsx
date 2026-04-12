@@ -52,7 +52,7 @@ const MainPage = ({ }) => {
               <img style={{with: '120px', height: '120px', marginTop: '-10px'}} src={main} />
             </div>
           </div>
-          <div style={{marginLeft: '-50px'}} className="col-1">
+          <div style={{marginLeft: '-20px'}} className="col-1">
             <div onClick={() => setCurrentTableFunc("Clients")} className="icon-with-text">
               <img src={clients} />
               <span>Клиенты</span>
@@ -95,7 +95,7 @@ const MainPage = ({ }) => {
                 />
               </div>
             </>
-          ) : (<div className="col-6">
+          ) : (<div className="col-12">
             <Details exitFunc={resetSelectedWork} work={selectedWork} />
           </div>
           )}
