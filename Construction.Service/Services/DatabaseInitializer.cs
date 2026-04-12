@@ -21,7 +21,7 @@ public class DatabaseInitializer : IHostedService
 
         bool hasAnyBrand = await dbContext.Brands.AnyAsync(cancellationToken);
 
-        if (!hasAnyBrand)
+        if (true || !hasAnyBrand)
         {
             await resetService.ClearAllTablesAndResetIdentityAsync();
             await InitializeDatabase(dbContext, cancellationToken);
@@ -109,7 +109,7 @@ public class DatabaseInitializer : IHostedService
         {
             new Status { Name = "Новая" },
             new Status { Name = "В работе" },
-            new Status { Name = "Завершена" },
+            new Status { Name = "Закрыт" },
             new Status { Name = "Отменена" },
             new Status { Name = "На проверке" }
         };
@@ -123,7 +123,7 @@ public class DatabaseInitializer : IHostedService
             {
                 DateBid = DateOnly.FromDateTime(DateTime.Now),
                 Term = DateOnly.FromDateTime(DateTime.Now.AddDays(30)),
-                CompletionDate = null,
+                CompletionDate = DateOnly.FromDateTime(DateTime.Now.AddDays(25)),
                 CityId = 1,
                 ShoppingMallId = 1,
                 BrandId = 1,
@@ -138,7 +138,7 @@ public class DatabaseInitializer : IHostedService
             {
                 DateBid = DateOnly.FromDateTime(DateTime.Now.AddDays(-5)),
                 Term = DateOnly.FromDateTime(DateTime.Now.AddDays(25)),
-                CompletionDate = null,
+                CompletionDate = DateOnly.FromDateTime(DateTime.Now.AddDays(20)),
                 CityId = 2,
                 ShoppingMallId = 2,
                 BrandId = 2,
@@ -168,7 +168,7 @@ public class DatabaseInitializer : IHostedService
             {
                 DateBid = DateOnly.FromDateTime(DateTime.Now.AddDays(-2)),
                 Term = DateOnly.FromDateTime(DateTime.Now.AddDays(35)),
-                CompletionDate = null,
+                CompletionDate = DateOnly.FromDateTime(DateTime.Now.AddDays(30)),
                 CityId = 4,
                 ShoppingMallId = 4,
                 BrandId = 4,
@@ -183,7 +183,7 @@ public class DatabaseInitializer : IHostedService
             {
                 DateBid = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
                 Term = DateOnly.FromDateTime(DateTime.Now.AddDays(15)),
-                CompletionDate = null,
+                CompletionDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
                 CityId = 5,
                 ShoppingMallId = 5,
                 BrandId = 5,

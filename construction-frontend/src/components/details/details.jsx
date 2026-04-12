@@ -8,6 +8,7 @@ import { workService } from '../../services/workService.js';
 import '../details/details.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { BeatLoader } from "react-spinners";
 
 
 
@@ -21,6 +22,7 @@ const Details = ({ work, exitFunc }) => {
   const [currentCity, setCurrentCity] = useState(null);
   const [shoppingMalls, setShoppingMalls] = useState(null);
   const [currentShoppingMall, setCurrentShoppingMall] = useState(null);
+  const [allDataLoad, setAllDataLoad] = useState(false);
 
   const prepareOption = (item, setter) => { setter({ value: item.id, label: item.name }); }
 
@@ -36,6 +38,7 @@ const Details = ({ work, exitFunc }) => {
     setClients(clients.map(item => ({ value: item.id, label: item.name })));
     setCities(cities.map(item => ({ value: item.id, label: item.name })));
     setShoppingMalls(shoppingMalls.map(item => ({ value: item.id, label: item.name })));
+    setAllDataLoad(true);
   }
 
   const changeWorkField = (field, object) => {
@@ -65,22 +68,30 @@ const Details = ({ work, exitFunc }) => {
   };
 
   const handleSave = (shouldClose) => {
-  workService.update(work)
-    .then(response => {
-      toast.success('Данные успешно сохранены!');
-      if (shouldClose) {
-        exitFunc();
-      }
-    })
-    .catch(error => {
-      toast.error('Ошибка при сохранении: ' + error.message);
-    });
-};
+    workService.update(work)
+      .then(response => {
+        toast.success('Данные успешно сохранены!');
+        if (shouldClose) {
+          exitFunc();
+        }
+      })
+      .catch(error => {
+        toast.error('Ошибка при сохранении: ' + error.message);
+      });
+  };
+
+  if (!allDataLoad) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: "60vh" }}>
+        <BeatLoader color="#0d6efd" size={15} />
+      </div>
+    );
+  }
 
 
   return (
     <div className="container-fluid form-container">
-     <ToastContainer position="top-right" autoClose={2000} />
+      <ToastContainer position="top-right" autoClose={2000} />
       <div className="row mb-4">
         <div className="col-12">
           <div className="d-flex gap-3 justify-content-start">

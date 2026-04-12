@@ -25,7 +25,7 @@ namespace Construction.Service.Services
             List<StatusDto> result = new();
             try
             {
-                var cache = await _minioCache.GetAsync<List<StatusDto>>(CacheConstants.ALL_WORKS);
+                var cache = await _minioCache.GetAsync<List<StatusDto>>(CacheConstants.ALL_STATUSES);
                 if (cache != null) 
                 {
                     result = cache;

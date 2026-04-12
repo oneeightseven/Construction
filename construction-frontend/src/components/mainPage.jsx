@@ -3,6 +3,7 @@ import FilterTree from "./filters/filterTree";
 import { useState } from 'react';
 import Details from "./details/details";
 import clients from '../images/clients.png';
+import main from '../images/main.png';
 import shoppingMalls from '../images/shoppingMalls.png';
 import objects from '../images/objects.png';
 import dogovor from '../images/dogovor.png';
@@ -47,6 +48,11 @@ const MainPage = ({ }) => {
       <div>
         <div className="row header">
           <div className="col-1">
+            <div onClick={() => setCurrentTableFunc(null)} className="icon-with-text">
+              <img style={{with: '120px', height: '120px', marginTop: '-10px'}} src={main} />
+            </div>
+          </div>
+          <div style={{marginLeft: '-50px'}} className="col-1">
             <div onClick={() => setCurrentTableFunc("Clients")} className="icon-with-text">
               <img src={clients} />
               <span>Клиенты</span>

@@ -135,56 +135,89 @@ const MainTable = ({ filters = [], strictSearch = false, searchMode = 'AND', set
     const headers = ["Номер", "Дата заявки", "Срок", "Дата завершения", "Город", "ТЦ", "Бренд", "Статус", "Объект", "Клиент", "Дата создания", "Сумма ИТОГО"];
 
     return (
-        <div style={{ height: '1200px', overflow: 'auto' }}>
-            {/* Информация о фильтрации */}
-            {filters.length > 0 && (
-                <div className={`alert ${getAlertType()} mb-2 py-2`}>
-                    <small>
-                        Найдено работ: {filteredWorks.length} из {allWorks.length}
-                        {filters.length > 0 && ` • Активных фильтров: ${filters.length}`}
-                        {` • ${getModeDescription()}`}
-                    </small>
-                </div>
-            )}
+    <div style={{ height: '1200px', overflow: 'auto', fontSize: '12px' }} className="p-2">
 
-            {loading ? (
-                <div className="text-center p-4">
-                    <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Загрузка...</span>
-                    </div>
-                </div>
-            ) : (
-                <div className="base-table">
-                    <div className="row table-header m-r-zero m-l-zero position-sticky top-0 bg-white">
-                        {headers.map((header, index) => (
-                            <div key={index} className="col-1 table-header-element">
-                                {header}
-                            </div>
-                        ))}
-                    </div>
+        {filters.length > 0 && (
+            <div className={`alert ${getAlertType()} mb-2 py-2`}>
+                <small>
+                    Найдено работ: {filteredWorks.length} из {allWorks.length}
+                    {filters.length > 0 && ` • Активных фильтров: ${filters.length}`}
+                    {` • ${getModeDescription()}`}
+                </small>
+            </div>
+        )}
 
-                    {filteredWorks.map((work) => (
-                        <div key={work.id}
-                            onDoubleClick={() => handleDoubleClick(work)}
-                            onClick={() => choseWork(work)}
-                            className={`row work-row m-r-zero m-l-zero ${chosenWork?.id === work.id ? 'chosen-row' : ''}`}>
-                            {workFields.map((field) => (
-                                <div key={field} className="col-1 table-element">
-                                    {getFieldValue(work, field)}
-                                </div>
+        {loading ? (
+            <div className="text-center p-4">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+        ) : (
+            <div className="table-responsive">
+                <table
+                    className="table table-hover table-bordered align-middle"
+                    style={{ tableLayout: 'fixed', width: '100%' }}
+                >
+                    <thead className="table-light sticky-top">
+                        <tr>
+                            {headers.map((header, index) => (
+                                <th key={index}>{header}</th>
                             ))}
-                        </div>
-                    ))}
+                        </tr>
+                    </thead>
 
-                    {filteredWorks.length === 0 && (
-                        <div className="text-center p-4 text-muted">
-                            {allWorks.length === 0 ? 'Нет данных' : 'По заданным фильтрам ничего не найдено'}
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
+                    <tbody>
+                        {filteredWorks.map((work) => (
+                            <tr
+                                key={work.id}
+                                onDoubleClick={() => handleDoubleClick(work)}
+                                onClick={() => choseWork(work)}
+                                className={
+                                    chosenWork?.id === work.id
+                                        ? "table-primary"
+                                        : ""
+                                }
+                                style={{ cursor: "pointer" }}
+                            >
+                                {workFields.map((field) => {
+                                    const value = getFieldValue(work, field);
+
+                                    return (
+                                        <td
+                                            key={field}
+                                            title={value}
+                                            style={{
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }}
+                                        >
+                                            {value}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+
+                        {filteredWorks.length === 0 && (
+                            <tr>
+                                <td
+                                    colSpan={headers.length}
+                                    className="text-center text-muted p-4"
+                                >
+                                    {allWorks.length === 0
+                                        ? "Нет данных"
+                                        : "По заданным фильтрам ничего не найдено"}
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        )}
+    </div>
+);
 };
 
 export default MainTable;
