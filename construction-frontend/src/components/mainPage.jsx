@@ -13,6 +13,7 @@ import ShoppingMallTable from "./tables/shoppingMallTable";
 import ExcelExportForm from "./forms/excelExportForm";
 import { useBase } from './contexts/BaseContext';
 import "./mainPage.css"
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const MainPage = ({ }) => {
 

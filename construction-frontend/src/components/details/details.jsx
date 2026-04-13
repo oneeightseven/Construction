@@ -9,7 +9,7 @@ import '../details/details.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BeatLoader } from "react-spinners";
-import Estimate from '../estimate/estimate.jsx';
+import Smeta from '../smeta/smeta.jsx';
 import Appendices from '../appendices/appendices.jsx';
 import Accounts from '../accounts/accounts.jsx';
 
@@ -295,7 +295,7 @@ const Details = ({ work, exitFunc }) => {
 
         <div className="col-6">
           {/* Смета */}
-          <Estimate />
+          <Smeta workId={work.id}/>
           {/* Приложения к договору*/}
           <Appendices/>
           {/* Счета */}

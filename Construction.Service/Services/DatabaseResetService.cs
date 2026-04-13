@@ -6,7 +6,7 @@ public class DatabaseResetService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    private readonly string[] TABLE_NAMES = {"Checks", "Works", "Employees", "Brands", "Cities", "Clients", "ConstructionObjects", "ShoppingMalls", "Statuses", "JobTitle"};
+    private readonly string[] TABLE_NAMES = {"Checks", "Works", "Employees", "Brands", "Cities", "Clients", "ConstructionObjects", "ShoppingMalls", "Statuses", "JobTitle", "Materials", "WorkSmeta"};
 
     public DatabaseResetService(ApplicationDbContext dbContext)
     {

@@ -11,6 +11,8 @@ namespace Construction.Models.Models
         public DateOnly? DateBid { get; set; } = null;
         public DateOnly? Term { get; set; } = null;
         public DateOnly? CompletionDate { get; set; } = null;
+        public string Description { get; set; }
+        public string Note { get; set; }
 
         [Required]
         public int CityId { get; set; }

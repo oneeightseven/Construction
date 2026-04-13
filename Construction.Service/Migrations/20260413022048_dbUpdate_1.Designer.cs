@@ -3,6 +3,7 @@ using System;
 using Construction.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Construction.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413022048_dbUpdate_1")]
+    partial class dbUpdate_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,30 +179,6 @@ namespace Construction.Service.Migrations
                     b.ToTable("JobTitle");
                 });
 
-            modelBuilder.Entity("Construction.Models.Models.Material", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Materials");
-                });
-
             modelBuilder.Entity("Construction.Models.Models.ShoppingMall", b =>
                 {
                     b.Property<int>("Id")
@@ -313,35 +292,6 @@ namespace Construction.Service.Migrations
                     b.ToTable("Works");
                 });
 
-            modelBuilder.Entity("Construction.Models.Models.WorkSmeta", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Count")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MaterialId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("WorkId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MaterialId");
-
-                    b.HasIndex("WorkId");
-
-                    b.ToTable("WorkSmeta");
-                });
-
             modelBuilder.Entity("Construction.Models.Models.Check", b =>
                 {
                     b.HasOne("Construction.Models.Models.Employee", "Technician")
@@ -421,25 +371,6 @@ namespace Construction.Service.Migrations
                     b.Navigation("ShoppingMall");
 
                     b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("Construction.Models.Models.WorkSmeta", b =>
-                {
-                    b.HasOne("Construction.Models.Models.Material", "Material")
-                        .WithMany()
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Construction.Models.Models.Work", "Work")
-                        .WithMany()
-                        .HasForeignKey("WorkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Material");
-
-                    b.Navigation("Work");
                 });
 #pragma warning restore 612, 618
         }

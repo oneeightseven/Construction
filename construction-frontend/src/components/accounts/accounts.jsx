@@ -32,7 +32,7 @@ const Accounts = ({ }) => {
   
   if (!allDataLoad) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "60vh" }}>
+      <div className="d-flex justify-content-center align-items-center" style={{ height: "10vh" }}>
         <BeatLoader color="#0d6efd" size={15} />
       </div>
     );

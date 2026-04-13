@@ -21,6 +21,8 @@ namespace Construction.Service.Contexts
         public DbSet<ShoppingMall> ShoppingMalls { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Work> Works { get; set; }
+        public DbSet<Material> Materials { get; set; }
+        public DbSet<WorkSmeta> WorkSmetas { get; set; }
 
     }
 }

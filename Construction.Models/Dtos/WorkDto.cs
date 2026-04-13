@@ -25,6 +25,8 @@ namespace Construction.Models.Dtos
             Summ = work.Summ;
             Term = work.Term;
             Employee = work.Employee;
+            Description = work.Description;
+            Note = work.Note;
         }
         public int Id { get; set; }
         public DateOnly? DateBid { get; set; } = null;
@@ -39,5 +41,7 @@ namespace Construction.Models.Dtos
         public Employee? Employee { get; set; }
         public DateOnly? DateOfCreation { get; set; } = null;
         public decimal? Summ { get; set; }
+        public string Description { get; set; }
+        public string Note { get; set; }
     }
 }

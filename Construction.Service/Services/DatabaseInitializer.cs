@@ -132,7 +132,9 @@ public class DatabaseInitializer : IHostedService
                 ClientId = 1,
                 EmployeeId = 1,
                 DateOfCreation = DateOnly.FromDateTime(DateTime.Now),
-                Summ = 150000
+                Summ = 150000,
+                Description = "",
+                Note = ""
             },
             new Work
             {
@@ -147,7 +149,9 @@ public class DatabaseInitializer : IHostedService
                 ClientId = 2,
                 EmployeeId = 2,
                 DateOfCreation = DateOnly.FromDateTime(DateTime.Now.AddDays(-5)),
-                Summ = 250000
+                Summ = 250000,
+                Description = "",
+                Note = ""
             },
             new Work
             {
@@ -162,7 +166,9 @@ public class DatabaseInitializer : IHostedService
                 ClientId = 3,
                 EmployeeId = 3,
                 DateOfCreation = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
-                Summ = 350000
+                Summ = 350000,
+                Description = "",
+                Note = ""
             },
             new Work
             {
@@ -177,7 +183,9 @@ public class DatabaseInitializer : IHostedService
                 ClientId = 4,
                 EmployeeId = 4,
                 DateOfCreation = DateOnly.FromDateTime(DateTime.Now.AddDays(-2)),
-                Summ = 180000
+                Summ = 180000,
+                Description = "",
+                Note = ""
             },
             new Work
             {
@@ -192,10 +200,76 @@ public class DatabaseInitializer : IHostedService
                 ClientId = 5,
                 EmployeeId = 5,
                 DateOfCreation = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
-                Summ = 420000
+                Summ = 420000,
+                Description = "",
+                Note = ""
             }
         };
         await dbContext.Works.AddRangeAsync(works, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var materials = new[]
+        {
+            new Material
+            {
+                Name = "Ламинат (1x1)",
+                Description = "Черный",
+                Price = 1000
+            },
+             new Material
+            {
+                Name = "Обои (2x2)",
+                Description = "Белые",
+                Price = 1500
+            },
+              new Material
+            {
+                Name = "Гвозди (100гм)",
+                Description = "Б/У",
+                Price = 150
+            },
+               new Material
+            {
+                Name = "Клей (1л)",
+                Description = "Розовый",
+                Price = 300
+            },
+        };
+        await dbContext.Materials.AddRangeAsync(materials, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var workSmetas = new[]
+        {
+            new WorkSmeta
+            {
+                MaterialId = 1,
+                Price = materials[0].Price,
+                Count = 5,
+                WorkId = 1,
+            },
+            new WorkSmeta
+            {
+                MaterialId = 2,
+                Price = materials[1].Price,
+                Count = 10,
+                WorkId = 1,
+            },
+            new WorkSmeta
+            {
+                MaterialId = 3,
+                Price = materials[2].Price,
+                Count = 130,
+                WorkId = 1,
+            },
+            new WorkSmeta
+            {
+                MaterialId = 4,
+                Price = materials[3].Price,
+                Count = 3,
+                WorkId = 1,
+            },
+        };
+        await dbContext.WorkSmetas.AddRangeAsync(workSmetas, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var checks = new[]
