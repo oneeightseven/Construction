@@ -10,5 +10,6 @@
         public const string ALL_CLIENTS = "allClients";
         public const string ALL_CITIES = "allCities";
         public const string ALL_MATERIALS = "allMaterials";
+        public const string ALL_ACCOUNTS = "allAccounts";
     }
 }

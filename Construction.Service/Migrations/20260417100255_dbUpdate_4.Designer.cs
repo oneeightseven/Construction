@@ -3,6 +3,7 @@ using System;
 using Construction.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Construction.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260417100255_dbUpdate_4")]
+    partial class dbUpdate_4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,16 +49,11 @@ namespace Construction.Service.Migrations
                     b.Property<int>("TypeOfAppointmentId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("WorkId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PayerId");
 
                     b.HasIndex("TypeOfAppointmentId");
-
-                    b.HasIndex("WorkId");
 
                     b.ToTable("Accounts");
                 });
@@ -411,17 +409,9 @@ namespace Construction.Service.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Construction.Models.Models.Work", "Work")
-                        .WithMany()
-                        .HasForeignKey("WorkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Payer");
 
                     b.Navigation("TypeOfAppointment");
-
-                    b.Navigation("Work");
                 });
 
             modelBuilder.Entity("Construction.Models.Models.Check", b =>

@@ -20,6 +20,7 @@ namespace Construction.Controllers
         private readonly IExcelHelper _excelHelper;
         private readonly IWorkSmetaService _workSmetaSerivce;
         private readonly IMaterialSerivce _materialService;
+        private readonly IAccountSerivce _accountSerivce;
         public HomeController(IJobTitleService jobTitleService,
                               IWorkService workService,
                               IStatusService statusService,
@@ -29,7 +30,8 @@ namespace Construction.Controllers
                               IConstructionObjectService constructionObjectService,
                               IExcelHelper excelHelper,
                               IWorkSmetaService workSmetaSerivce,
-                              IMaterialSerivce materialSerivce)
+                              IMaterialSerivce materialSerivce,
+                              IAccountSerivce accountSerivce)
         {
             _jobTitleService = jobTitleService;
             _workService = workService;
@@ -41,6 +43,7 @@ namespace Construction.Controllers
             _excelHelper = excelHelper;
             _workSmetaSerivce = workSmetaSerivce;
             _materialService = materialSerivce;
+            _accountSerivce = accountSerivce;
         }
 
         [HttpGet(nameof(GetTitles))]
@@ -175,6 +178,13 @@ namespace Construction.Controllers
         public async Task<IActionResult> RemoveSmetaById([FromBody] int id)
         {
             var result = await _workSmetaSerivce.RemoveSmetaById(id);
+            return Ok(result);
+        }
+
+        [HttpPost(nameof(GetAccountsByWorkId))]
+        public async Task<IActionResult> GetAccountsByWorkId([FromBody] int id)
+        {
+            var result = await _accountSerivce.GetByWorkIdAsync(id);
             return Ok(result);
         }
     }

@@ -272,6 +272,63 @@ public class DatabaseInitializer : IHostedService
         await dbContext.WorkSmetas.AddRangeAsync(workSmetas, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
+        var tеypesOfAppointments = new[]
+        {
+            new TypeOfAppointment
+            {
+                Name = "Услуги"
+            },
+            new TypeOfAppointment
+            {
+                Name = "Материалы"
+            },
+        };
+        await dbContext.TypesOfAppointments.AddRangeAsync(tеypesOfAppointments, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var accounts = new[]
+        {
+            new Account
+            {
+                Date = DateTime.UtcNow,
+                TypeOfAppointmentId = 1,
+                PayerId = 1,
+                Sum = 5000,
+                WorkId = 1,
+                Details = "40802810702270004486",
+            },
+            new Account
+            {
+                Date = DateTime.UtcNow,
+                TypeOfAppointmentId = 2,
+                PayerId = 1,
+                Sum = 15000,
+                WorkId = 1,
+                Details = "40853891248571827375",
+            },
+            new Account
+            {
+                Date = DateTime.UtcNow,
+                TypeOfAppointmentId = 2,
+                PayerId = 1,
+                Sum = 26000,
+                WorkId = 1,
+                Details = "40853912404512858231",
+            },
+            new Account
+            {
+                Date = DateTime.UtcNow,
+                TypeOfAppointmentId = 1,
+                PayerId = 1,
+                Sum = 33000,
+                WorkId = 1,
+                Details = "40853995129591239042",
+            },
+        };
+        await dbContext.Accounts.AddRangeAsync(accounts, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        //Надо подумать об этой таблице
         var checks = new[]
         {
             new Check

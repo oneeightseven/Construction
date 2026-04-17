@@ -19,6 +19,7 @@ namespace Construction.Service
             services.AddScoped<IConstructionObjectService, ConstructionObjectService>();
             services.AddScoped<IWorkSmetaService, WorkSmetaService>();
             services.AddScoped<IMaterialSerivce, MaterialService>();
+            services.AddScoped<IAccountSerivce, AccountSerivce>();
 
             //Another containers
             services.AddScoped<IExcelHelper, ExcelHelper>();

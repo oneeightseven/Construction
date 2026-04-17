@@ -9,7 +9,7 @@ public class DatabaseResetService
     private readonly IMinioCacheService _minioCache;
 
 
-    private readonly string[] TABLE_NAMES = {"Checks", "Works", "Employees", "Brands", "Cities", "Clients", "ConstructionObjects", "ShoppingMalls", "Statuses", "JobTitle", "Materials", "WorkSmeta"};
+    private readonly string[] TABLE_NAMES = {"Checks", "Works", "Employees", "Brands", "Cities", "Clients", "ConstructionObjects", "ShoppingMalls", "Statuses", "JobTitle", "Materials", "WorkSmeta", "TypesOfAppointments", "Accounts" };
 
     public DatabaseResetService(ApplicationDbContext dbContext, IMinioCacheService minioCache)
     {

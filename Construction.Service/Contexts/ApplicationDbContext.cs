@@ -23,6 +23,8 @@ namespace Construction.Service.Contexts
         public DbSet<Work> Works { get; set; }
         public DbSet<Material> Materials { get; set; }
         public DbSet<WorkSmeta> WorkSmetas { get; set; }
+        public DbSet<TypeOfAppointment> TypesOfAppointments { get; set; }
+        public DbSet<Account> Accounts { get; set; }
 
     }
 }
