@@ -3,8 +3,11 @@ import { toast } from 'react-toastify';
 import { BeatLoader } from "react-spinners";
 import { Modal, Button, Form } from "react-bootstrap";
 import { accountService } from '../../services/accountService';
+import { typeOfAppointmentService } from '../../services/typeOfAppointmentService';
+import { clientService } from '../../services/clientService';
 import '../details/details.css';
 import 'react-toastify/dist/ReactToastify.css';
+import Select from 'react-select';
 
 const Accounts = ({ workId }) => {
 
@@ -47,24 +50,71 @@ const Accounts = ({ workId }) => {
 
     const isEdit = !!account;
 
-    const [appointment, setAppointment] = useState("");
+    const [types, setTypes] = useState([]);
+    const [typesForSelect, setTypesForSelect] = useState([]);
+
+    const [payers, setPayers] = useState([]);
+    const [payersForSelect, setPayersForSelect] = useState([]);
+
+    const [typeId, setTypeId] = useState(null);
+    const [payerId, setPayerId] = useState(null);
+
     const [date, setDate] = useState("");
-    const [client, setClient] = useState("");
     const [sum, setSum] = useState(0);
 
+    const [loading, setLoading] = useState(false);
+
+    // ✅ загрузка справочников при открытии модалки
+    useEffect(() => {
+      if (!show) return;
+
+      setLoading(true);
+
+      Promise.all([
+        typeOfAppointmentService.getAll(),   // сервис назначения
+        clientService.getAll()                // сервис плательщиков
+      ])
+        .then(([typesRes, payersRes]) => {
+
+          const typesData = typesRes || [];
+          const payersData = payersRes || [];
+
+          setTypes(typesData);
+          setPayers(payersData);
+
+          setTypesForSelect(
+            typesData.map(x => ({
+              value: x.id,
+              label: x.name
+            }))
+          );
+
+          setPayersForSelect(
+            payersData.map(x => ({
+              value: x.id,
+              label: x.name
+            }))
+          );
+        })
+        .catch(() => toast.error("Ошибка загрузки данных"))
+        .finally(() => setLoading(false));
+
+    }, [show]);
+
+    // ✅ заполнение при редактировании
     useEffect(() => {
       if (!account) return;
 
-      setAppointment(account.appointment);
-      setDate(account.date);
-      setClient(account.client);
+      setTypeId(account.typeOfAppointment?.id);
+      setPayerId(account.payer?.id);
+      setDate(account.date?.slice(0, 16)); // для datetime-local
       setSum(account.sum);
 
     }, [account]);
 
     const saveAccount = () => {
 
-      if (!appointment || !date || !client) {
+      if (!typeId || !payerId || !date) {
         toast.error("Заполните все поля");
         return;
       }
@@ -72,10 +122,10 @@ const Accounts = ({ workId }) => {
       const payload = {
         id: account?.id,
         workId: workId,
-        appointment,
-        date,
-        client,
-        sum
+        typeOfAppointmentId: typeId,
+        payerId: payerId,
+        date: date,
+        sum: sum
       };
 
       accountService.addAccountToWork(payload)
@@ -88,7 +138,6 @@ const Accounts = ({ workId }) => {
     };
 
     const deleteAccount = () => {
-
       if (!account?.id) return;
       if (!window.confirm("Удалить счёт?")) return;
 
@@ -103,64 +152,81 @@ const Accounts = ({ workId }) => {
 
     return (
       <Modal show={show} onHide={onClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {isEdit ? "Редактировать счёт" : "Добавить счёт"}
-          </Modal.Title>
-        </Modal.Header>
 
-        <Modal.Body>
-          <Form>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Назначение</Form.Label>
-              <Form.Control
-                value={appointment}
-                onChange={(e) => setAppointment(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Дата</Form.Label>
-              <Form.Control
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Плательщик</Form.Label>
-              <Form.Control
-                value={client}
-                onChange={(e) => setClient(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label>Сумма</Form.Label>
-              <Form.Control
-                type="number"
-                value={sum}
-                onChange={(e) => setSum(Number(e.target.value))}
-              />
-            </Form.Group>
-
-          </Form>
-        </Modal.Body>
-
-        <Modal.Footer>
-          {isEdit && (
-            <Button variant="danger" onClick={deleteAccount}>
-              Удалить
-            </Button>
-          )}
-          <div className="ms-auto">
-            <Button variant="primary" onClick={saveAccount}>
-              {isEdit ? "Сохранить" : "Добавить"}
-            </Button>
+        {loading ? (
+          <div className="d-flex justify-content-center align-items-center" style={{ height: "15vh" }}>
+            <BeatLoader color="#0d6efd" />
           </div>
-        </Modal.Footer>
+        ) : (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>
+                {isEdit ? "Редактировать счёт" : "Добавить счёт"}
+              </Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              <Form>
+
+                {/* ✅ Назначение */}
+                <Form.Group className="mb-3">
+                  <Form.Label>Назначение</Form.Label>
+                  <Select
+                    options={typesForSelect}
+                    value={typesForSelect.find(x => x.value === typeId) || null}
+                    onChange={(selected) => setTypeId(selected.value)}
+                    placeholder="Выберите назначение"
+                  />
+                </Form.Group>
+
+                {/* ✅ Дата */}
+                <Form.Group className="mb-3">
+                  <Form.Label>Дата</Form.Label>
+                  <Form.Control
+                    type="datetime-local"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                  />
+                </Form.Group>
+
+                {/* ✅ Плательщик */}
+                <Form.Group className="mb-3">
+                  <Form.Label>Плательщик</Form.Label>
+                  <Select
+                    options={payersForSelect}
+                    value={payersForSelect.find(x => x.value === payerId) || null}
+                    onChange={(selected) => setPayerId(selected.value)}
+                    placeholder="Выберите плательщика"
+                  />
+                </Form.Group>
+
+                {/* ✅ Сумма */}
+                <Form.Group>
+                  <Form.Label>Сумма</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={sum}
+                    onChange={(e) => setSum(Number(e.target.value))}
+                  />
+                </Form.Group>
+
+              </Form>
+            </Modal.Body>
+
+            <Modal.Footer>
+              {isEdit && (
+                <Button variant="danger" onClick={deleteAccount}>
+                  Удалить
+                </Button>
+              )}
+              <div className="ms-auto">
+                <Button variant="primary" onClick={saveAccount}>
+                  {isEdit ? "Сохранить" : "Добавить"}
+                </Button>
+              </div>
+            </Modal.Footer>
+          </>
+        )}
       </Modal>
     );
   };

@@ -11,5 +11,6 @@
         public const string ALL_CITIES = "allCities";
         public const string ALL_MATERIALS = "allMaterials";
         public const string ALL_ACCOUNTS = "allAccounts";
+        public const string ALL_TYPE_OF_APPOINTMENT = "allTypeOfAppointment";
     }
 }
