@@ -2,11 +2,11 @@ import { apiService } from './apiService.js';
 
 class JobTitleService {
     async getAll() {
-        return await apiService.get('Home/GetTitles');
+        return await apiService.get('JobTitle/GetAll');
     }
 
     async create(jobTitle) {
-        return await apiService.post('Home/CreateTitle', jobTitle);
+        return await apiService.post('JobTitle/CreateTitle', jobTitle);
     }
 }
 

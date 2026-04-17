@@ -2,7 +2,7 @@ import { apiService } from './apiService.js';
 
 class MaterialService {
     async getAll() {
-        return await apiService.get('Home/GetAllMaterials');
+        return await apiService.get('Material/GetAll');
     }
 }
 

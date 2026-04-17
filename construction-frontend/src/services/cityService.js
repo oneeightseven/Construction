@@ -2,7 +2,7 @@ import { apiService } from './apiService.js';
 
 class CityService {
     async getAll() {
-        return await apiService.get('Home/GetCities');
+        return await apiService.get('City/GetAll');
     }
 }
 
