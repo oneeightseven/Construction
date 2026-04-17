@@ -23,14 +23,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         b => b.MigrationsAssembly("Construction.Service")
     ));
 
-builder.Services.AddScoped<DatabaseResetService>();
-builder.Services.AddHostedService<DatabaseInitializer>();
-
 builder.Services.AddSingleton<IMinioCacheService>(provider =>
 {
     var configuration = provider.GetRequiredService<IConfiguration>();
     return new MinioCacheService(configuration);
 });
+
+builder.Services.AddScoped<DatabaseResetService>();
+builder.Services.AddHostedService<DatabaseInitializer>();
 
 builder.Services.AddCors(options =>
 {

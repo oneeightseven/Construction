@@ -6,5 +6,6 @@ namespace Construction.Service.Interfaces
     {
         public Task<List<WorkSmetaDto>> GetSmetaByWorkIdAsync(int workId);
         public Task<int> AddSmetaToWork(AddSmetaToWorkDto model);
+        public Task<int> RemoveSmetaById(int smetaId);
     }
 }

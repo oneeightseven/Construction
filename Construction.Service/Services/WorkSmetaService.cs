@@ -25,22 +25,40 @@ namespace Construction.Service.Services
 
         public async Task<int> AddSmetaToWork(AddSmetaToWorkDto model)
         {
-            var result = -1;
             try
             {
-                WorkSmeta workSmeta = new()
+                WorkSmeta entity;
+
+                if (model.Id == null)
                 {
-                    Count = model.Count,
-                    Price = model.Price,
-                    MaterialId = model.MaterialId,
-                    WorkId = model.WorkId,
-                };
+                    entity = new WorkSmeta
+                    {
+                        Count = model.Count,
+                        Price = model.Price,
+                        MaterialId = model.MaterialId,
+                        WorkId = model.WorkId,
+                    };
 
-                await _context.WorkSmetas.AddAsync(workSmeta);
-                result = await _context.SaveChangesAsync();
+                    await _context.WorkSmetas.AddAsync(entity);
+                }
+                else
+                {
+                    entity = await _context.WorkSmetas.FirstOrDefaultAsync(x => x.Id == model.Id);
 
-                if (result > 0) { 
-                    _logger.LogInformation(LogHelper.SuccessUpdate("smeta to work", 0));
+                    if (entity == null) return -1;
+
+                    entity.Count = model.Count;
+                    entity.Price = model.Price;
+                    entity.MaterialId = model.MaterialId;
+                    entity.WorkId = model.WorkId;
+                }
+
+                var result = await _context.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    _logger.LogInformation(LogHelper.SuccessUpdate("smeta to work", entity.Id));
+
                     await _minioCache.RemoveAsync($"{CacheConstants.SMETA_BY_WORK_ID}_{model.WorkId}");
                 }
 
@@ -48,8 +66,8 @@ namespace Construction.Service.Services
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(LogHelper.BadGet("work smeta by id"), ex);
-                return result;
+                _logger.LogCritical(ex, "Error while saving work smeta");
+                return -1;
             }
         }
 
@@ -80,6 +98,34 @@ namespace Construction.Service.Services
             {
                 _logger.LogCritical(LogHelper.BadGet("work smeta by id"), ex);
                 return result;
+            }
+        }
+
+        public async Task<int> RemoveSmetaById(int smetaId)
+        {
+            int result = -1;
+            try
+            {
+                var smeta = await _context.WorkSmetas.FirstOrDefaultAsync(x => x.Id == smetaId);
+                if (smeta != null)
+                {
+                    _context.WorkSmetas.Remove(smeta);
+                    result = await _context.SaveChangesAsync();
+                }
+
+                if (result > 0)
+                {
+                    _logger.LogInformation(LogHelper.SuccessRemove("smeta from work", smetaId));
+
+                    await _minioCache.RemoveAsync($"{CacheConstants.SMETA_BY_WORK_ID}_{smeta?.WorkId}");
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Error while remove work smeta");
+                return -1;
             }
         }
     }

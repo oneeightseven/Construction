@@ -55,7 +55,7 @@ namespace Construction.Service.Services
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(LogHelper.BadGet("works"));
+                _logger.LogCritical(LogHelper.BadGet("works"), ex);
                 return result;
             }
             

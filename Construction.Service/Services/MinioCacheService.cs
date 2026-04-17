@@ -147,5 +147,36 @@ public class MinioCacheService : IMinioCacheService
             Console.WriteLine($"Error creating bucket: {ex.Message}");
         }
     }
+
+    public async Task ClearBucketAsync()
+    {
+        try
+        {
+            var listArgs = new ListObjectsArgs()
+                .WithBucket(_bucketName)
+                .WithRecursive(true);
+
+            var objects = new List<string>();
+
+            await foreach (var item in _minioClient.ListObjectsEnumAsync(listArgs))
+            {
+                objects.Add(item.Key);
+            }
+
+            foreach (var key in objects)
+            {
+                await _minioClient.RemoveObjectAsync(
+                    new RemoveObjectArgs()
+                        .WithBucket(_bucketName)
+                        .WithObject(key)
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error clearing bucket {_bucketName}: {ex.Message}");
+            throw;
+        }
+    }
 }
 

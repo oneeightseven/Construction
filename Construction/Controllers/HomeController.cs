@@ -170,5 +170,12 @@ namespace Construction.Controllers
             var result = await _workSmetaSerivce.AddSmetaToWork(model);
             return Ok(result);
         }
+
+        [HttpPost(nameof(RemoveSmetaById))]
+        public async Task<IActionResult> RemoveSmetaById([FromBody] int id)
+        {
+            var result = await _workSmetaSerivce.RemoveSmetaById(id);
+            return Ok(result);
+        }
     }
 }

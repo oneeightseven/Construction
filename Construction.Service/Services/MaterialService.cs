@@ -44,7 +44,7 @@ namespace Construction.Service.Services
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(LogHelper.BadGet("all materials"));
+                _logger.LogCritical(LogHelper.BadGet("all materials"), ex);
                 return result;
             }
         }

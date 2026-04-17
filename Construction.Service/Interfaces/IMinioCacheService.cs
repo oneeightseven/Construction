@@ -6,5 +6,6 @@
         Task SetAsync<T>(string key, T data, int days = 1);
         Task<bool> ExistsAsync(string key);
         Task RemoveAsync(string key);
+        Task ClearBucketAsync();
     }
 }
