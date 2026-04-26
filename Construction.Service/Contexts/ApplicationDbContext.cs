@@ -25,6 +25,7 @@ namespace Construction.Service.Contexts
         public DbSet<WorkSmeta> WorkSmetas { get; set; }
         public DbSet<TypeOfAppointment> TypesOfAppointments { get; set; }
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<StoredFile> StoredFiles { get; set; }
 
     }
 }

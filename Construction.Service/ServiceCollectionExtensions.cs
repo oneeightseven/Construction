@@ -21,6 +21,8 @@ namespace Construction.Service
             services.AddScoped<IMaterialSerivce, MaterialService>();
             services.AddScoped<IAccountSerivce, AccountSerivce>();
             services.AddScoped<ITypeOfAppointmentService, TypeOfAppointmentService>();
+            services.AddScoped<IFileStorageService, MinioFileStorageService>();
+            services.AddScoped<IAppendicesService, AppendicesService>();
 
             //Another containers
             services.AddScoped<IExcelHelper, ExcelHelper>();

@@ -1,35 +1,176 @@
 import { useState, useEffect } from 'react';
+import { Modal, Button, Form } from "react-bootstrap";
+import { toast } from 'react-toastify';
+import { BeatLoader } from "react-spinners";
 import '../details/details.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { BeatLoader } from "react-spinners";
+import { appendicesService } from '../../services/appendicesService';
 
+const Appendices = () => {
 
-
-const Appendices = ({ }) => {
-
-  const [appendices, setAppendices] = useState(null);
+  const [appendices, setAppendices] = useState([]);
   const [allDataLoad, setAllDataLoad] = useState(false);
 
-  const addTotals = () => {
-    let objects = [];
-    let moq1 = { id: 1, name: 'safetyPrecautions.docx', type: 'Документ', date: '11.04.2026' }
-    let moq2 = { id: 2, name: 'layout1.png', type: 'Изображение', date: '10.04.2026' }
-    let moq3 = { id: 3, name: 'layout2.png', type: 'Изображение', date: '10.04.2026' }
-    let moq4 = { id: 4, name: 'calculations.xlsx', type: 'Таблица', date: '9.04.2026' }
-    objects.push(moq1);
-    objects.push(moq2);
-    objects.push(moq3);
-    objects.push(moq4);
-    setAppendices(objects);
-  }
+  const [show, setShow] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
-    
-    addTotals();
     setAllDataLoad(true);
   }, []);
 
-  
+  const getFileType = (fileName) => {
+    const extension = fileName.split('.').pop().toLowerCase();
+
+    const documents = ['doc', 'docx', 'pdf', 'txt'];
+    const images = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'];
+    const tables = ['xls', 'xlsx', 'csv'];
+
+    if (documents.includes(extension)) return 'Документ';
+    if (images.includes(extension)) return 'Изображение';
+    if (tables.includes(extension)) return 'Таблица';
+
+    return 'Документ';
+  };
+
+  const handleAdd = () => {
+    setSelectedFile(null);
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setSelectedFile(null);
+  };
+
+  const deleteFile = (id) => {
+    if (!window.confirm("Удалить файл?")) return;
+
+    setAppendices(prev => prev.filter(x => x.id !== id));
+    toast.success("Файл удалён");
+  };
+
+  const FileModal = ({ show, onClose }) => {
+
+    const [file, setFile] = useState(null);
+    const [fileName, setFileName] = useState("");
+    const [fileType, setFileType] = useState("");
+    const [date, setDate] = useState("");
+
+    useEffect(() => {
+      if (!show) return;
+
+      const now = new Date().toISOString().slice(0, 16);
+      setDate(now);
+    }, [show]);
+
+    const getFileType = (fileName) => {
+      const extension = fileName.split('.').pop().toLowerCase();
+
+      const documents = ['doc', 'docx', 'pdf', 'txt'];
+      const images = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'];
+      const tables = ['xls', 'xlsx', 'csv'];
+
+      if (documents.includes(extension)) return 'Документ';
+      if (images.includes(extension)) return 'Изображение';
+      if (tables.includes(extension)) return 'Таблица';
+
+      return 'Документ';
+    };
+
+    const handleFileChange = (e) => {
+      const selected = e.target.files[0];
+      if (!selected) return;
+
+      setFile(selected);
+      setFileName(selected.name);
+      setFileType(getFileType(selected.name));
+    };
+
+    const saveFile = async () => {
+      if (!file) {
+        toast.error("Выберите файл");
+        return;
+      }
+
+      try {
+        const result = await appendicesService.create(
+          file,
+          fileName,
+          date
+        );
+
+        setAppendices(prev => [
+          ...prev,
+          {
+            id: result.id,
+            name: fileName
+          }
+        ]);
+
+        toast.success("Файл загружен");
+        onClose();
+
+      } catch (e) {
+        toast.error("Ошибка загрузки");
+      }
+    };
+    return (
+      <Modal show={show} onHide={onClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Добавить файл</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <Form>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Файл</Form.Label>
+              <Form.Control
+                type="file"
+                onChange={handleFileChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Название файла</Form.Label>
+              <Form.Control
+                value={fileName}
+                onChange={(e) => setFileName(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Тип файла</Form.Label>
+              <Form.Control
+                value={fileType}
+                readOnly
+              />
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>Дата добавления</Form.Label>
+              <Form.Control
+                type="datetime-local"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </Form.Group>
+
+          </Form>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button variant="primary" onClick={saveFile}>
+            Добавить
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
   if (!allDataLoad) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: "10vh" }}>
@@ -38,55 +179,74 @@ const Appendices = ({ }) => {
     );
   }
 
+  return (
+    <div className='border rounded-4 shadow-sm p-3 bg-white' style={{ marginTop: '20px' }}>
+      <h5 className="mb-3">Приложения к договору:</h5>
 
-  return(
-    <div className='border rounded-4 shadow-sm p-3 bg-white' style={{marginTop: '20px'}}>
-            <h5 className="mb-3">Приложения к договору:</h5>
-            <div className="border rounded-4 shadow-sm" style={{maxHeight: "120px", overflowY: "auto", backgroundColor: "#fff"}}>
-              <div className="table-responsive">
-                <table className="table table-sm table-hover align-middle mb-0">
-                  <thead className="table-light" style={{position: "sticky", top: 0, zIndex: 1}}>
-                    <tr>
-                      <th>№</th>
-                      <th className='text-center'>Название</th>
-                      <th className='text-center'>Тип</th>
-                      <th className='text-end'>Дата добавления</th>
-                    </tr>
-                  </thead>
+      <div className="border rounded-4 shadow-sm" style={{ maxHeight: "120px", overflowY: "auto" }}>
+        <div className="table-responsive">
+          <table className="table table-sm table-hover align-middle mb-0">
+            <thead className="table-light" style={{ position: "sticky", top: 0 }}>
+              <tr>
+                <th>№</th>
+                <th className='text-center'>Название файла</th>
+                <th className='text-center'>Тип</th>
+                <th className='text-end'>Дата добавления</th>
+                <th></th>
+              </tr>
+            </thead>
 
-                  <tbody>
-                    {appendices?.length > 0 ? (
-                      appendices.map((item, index) => (
-                        <tr key={item.id || index}>
-                          <td>{item.id}</td>
-                          <td className="fw-semibold text-center">
-                            {item.name}
-                          </td>
-                          <td className='text-center'>
-                            {item.type}
-                          </td>
-                          <td className='text-end'>
-                            {item.date}
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="4" className="text-center text-muted py-3">
-                          Нет файлов
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <button type="button" className="btn btn-outline-primary btn-sm px-4 d-block mx-auto mt-3" style={{ marginTop: '10px' }} onClick={() => (true)}>
-              <i className="bi bi-check-all me-2"></i>Добавить файл
-            </button>
+            <tbody>
+              {appendices.length > 0 ? (
+                appendices.map((item, index) => (
+                  <tr key={item.id}>
+                    <td>{index + 1}</td>
+                    <td className="fw-semibold text-center">
+                      {item.name}
+                    </td>
+                    <td className='text-center'>
+                      {item.type}
+                    </td>
+                    <td className='text-end'>
+                      {item.date}
+                    </td>
+                    <td className="text-end">
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => deleteFile(item.id)}
+                      >
+                        Удалить
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center text-muted py-3">
+                    Нет файлов
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-          </div>
-  )
+      <button
+        type="button"
+        className="btn btn-outline-primary btn-sm px-4 d-block mx-auto mt-3"
+        onClick={handleAdd}
+      >
+        Добавить файл
+      </button>
+
+      <FileModal
+        show={show}
+        onClose={handleClose}
+      />
+    </div>
+  );
 };
 
 export default Appendices;
