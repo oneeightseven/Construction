@@ -61,18 +61,18 @@ const Accounts = ({ workId }) => {
 
     const [date, setDate] = useState("");
     const [sum, setSum] = useState(0);
+    const [details, setDetails] = useState("");
 
     const [loading, setLoading] = useState(false);
 
-    // ✅ загрузка справочников при открытии модалки
     useEffect(() => {
       if (!show) return;
 
       setLoading(true);
 
       Promise.all([
-        typeOfAppointmentService.getAll(),   // сервис назначения
-        clientService.getAll()                // сервис плательщиков
+        typeOfAppointmentService.getAll(),
+        clientService.getAll()
       ])
         .then(([typesRes, payersRes]) => {
 
@@ -101,14 +101,14 @@ const Accounts = ({ workId }) => {
 
     }, [show]);
 
-    // ✅ заполнение при редактировании
     useEffect(() => {
       if (!account) return;
 
       setTypeId(account.typeOfAppointment?.id);
       setPayerId(account.payer?.id);
-      setDate(account.date?.slice(0, 16)); // для datetime-local
+      setDate(account.date?.slice(0, 16));
       setSum(account.sum);
+      setDetails(account.details);
 
     }, [account]);
 
@@ -125,7 +125,8 @@ const Accounts = ({ workId }) => {
         typeOfAppointmentId: typeId,
         payerId: payerId,
         date: date,
-        sum: sum
+        sum: sum,
+        details: details
       };
 
       accountService.addAccountToWork(payload)
@@ -168,7 +169,6 @@ const Accounts = ({ workId }) => {
             <Modal.Body>
               <Form>
 
-                {/* ✅ Назначение */}
                 <Form.Group className="mb-3">
                   <Form.Label>Назначение</Form.Label>
                   <Select
@@ -179,7 +179,6 @@ const Accounts = ({ workId }) => {
                   />
                 </Form.Group>
 
-                {/* ✅ Дата */}
                 <Form.Group className="mb-3">
                   <Form.Label>Дата</Form.Label>
                   <Form.Control
@@ -189,7 +188,6 @@ const Accounts = ({ workId }) => {
                   />
                 </Form.Group>
 
-                {/* ✅ Плательщик */}
                 <Form.Group className="mb-3">
                   <Form.Label>Плательщик</Form.Label>
                   <Select
@@ -200,13 +198,20 @@ const Accounts = ({ workId }) => {
                   />
                 </Form.Group>
 
-                {/* ✅ Сумма */}
                 <Form.Group>
                   <Form.Label>Сумма</Form.Label>
                   <Form.Control
                     type="number"
                     value={sum}
                     onChange={(e) => setSum(Number(e.target.value))}
+                  />
+                </Form.Group>
+
+                <Form.Group>
+                  <Form.Label>Реквизиты</Form.Label>
+                  <Form.Control
+                    value={details}
+                    onChange={(e) => setDetails(e.target.value)}
                   />
                 </Form.Group>
 

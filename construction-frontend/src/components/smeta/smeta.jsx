@@ -81,7 +81,6 @@ const Smeta = ({ workId }) => {
 
     }, [show]);
 
-    // если редактирование — заполняем форму
     useEffect(() => {
       if (!smeta) return;
 

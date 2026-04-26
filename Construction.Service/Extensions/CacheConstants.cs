@@ -10,7 +10,7 @@
         public const string ALL_CLIENTS = "allClients";
         public const string ALL_CITIES = "allCities";
         public const string ALL_MATERIALS = "allMaterials";
-        public const string ALL_ACCOUNTS = "allAccounts";
+        public const string ACCOUNTS_BY_WORK_ID = "accountsByWorkId";
         public const string ALL_TYPE_OF_APPOINTMENT = "allTypeOfAppointment";
     }
 }

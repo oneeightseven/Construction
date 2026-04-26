@@ -6,11 +6,11 @@ class AccountService {
     }
 
     async addAccountToWork(account){
-        return await apiService.post('Account/AddAccountToWork', account);
+        return await apiService.post('Account/AddToWork', account);
     }
 
     async removeAccountById(accountId){
-        return await apiService.post('Account/RemoveAccountById', accountId);
+        return await apiService.post('Account/RemoveById', accountId);
     }
 }
 

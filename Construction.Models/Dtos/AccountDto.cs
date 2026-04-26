@@ -24,6 +24,6 @@ namespace Construction.Models.Dtos
 
         public string Details { get; set; }
 
-        public Decimal Sum { get; set; }
+        public decimal Sum { get; set; }
     }
 }
