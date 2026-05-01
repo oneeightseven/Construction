@@ -297,7 +297,7 @@ const Details = ({ work, exitFunc }) => {
           {/* Смета */}
           <Smeta workId={work.id}/>
           {/* Приложения к договору*/}
-          <Appendices />
+          <Appendices workId={work.id} />
           {/* Счета */}
           <Accounts workId={work.id}/>
         </div>

@@ -23,5 +23,11 @@ namespace Construction.Models.Models
 
         [Required]
         public DateTime CreatedAt { get; set; }
+
+        [Required]
+        public int WorkId { get; set; }
+
+        [ForeignKey("WorkId")]
+        public Work? Work { get; set; }
     }
 }

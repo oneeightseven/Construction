@@ -5,31 +5,45 @@ import { BeatLoader } from "react-spinners";
 import '../details/details.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { appendicesService } from '../../services/appendicesService';
+import png from '../../images/png.png';
+import excel from '../../images/excel.png';
+import pdf from '../../images/pdf.png';
+import word from '../../images/word.png';
+import jpeg from '../../images/jpeg.png';
+import file from '../../images/file.png';
 
-const Appendices = () => {
-
+const Appendices = (workId) => {
   const [appendices, setAppendices] = useState([]);
   const [allDataLoad, setAllDataLoad] = useState(false);
 
   const [show, setShow] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const fetchData = () => {
+    setAllDataLoad(false);
+
+    appendicesService.getByWorkId(workId.workId)
+      .then(response => {
+        setAppendices(response || []);
+      })
+      .catch(() => toast.error("Ошибка загрузки счетов"))
+      .finally(() => setAllDataLoad(true));
+  }
+
   useEffect(() => {
-    setAllDataLoad(true);
+    fetchData();
   }, []);
 
-  const getFileType = (fileName) => {
-    const extension = fileName.split('.').pop().toLowerCase();
+  const getFileImage = (contentType) => {
+    if (!contentType) return file;
 
-    const documents = ['doc', 'docx', 'pdf', 'txt'];
-    const images = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'];
-    const tables = ['xls', 'xlsx', 'csv'];
+    if (contentType.includes("png")) return png;
+    if (contentType.includes("jpeg")) return jpeg;
+    if (contentType.includes("pdf")) return pdf;
+    if (contentType.includes("word")) return word;
+    if (contentType.includes("sheet")) return excel;
 
-    if (documents.includes(extension)) return 'Документ';
-    if (images.includes(extension)) return 'Изображение';
-    if (tables.includes(extension)) return 'Таблица';
-
-    return 'Документ';
+    return file;
   };
 
   const handleAdd = () => {
@@ -45,8 +59,51 @@ const Appendices = () => {
   const deleteFile = (id) => {
     if (!window.confirm("Удалить файл?")) return;
 
-    setAppendices(prev => prev.filter(x => x.id !== id));
-    toast.success("Файл удалён");
+    appendicesService.removeById(id)
+      .then(response => {
+        fetchData();
+      })
+      .catch(() => toast.error("Ошибка удаления"))
+      .finally(() => toast.success("Файл удалён"));
+
+  };
+
+  const getFileNameFromDisposition = (disposition) => {
+    if (!disposition) return "download";
+
+    // 1️⃣ сначала filename*
+    const fileNameStarMatch = disposition.match(/filename\*\=UTF-8''([^;]+)/i);
+    if (fileNameStarMatch?.[1]) {
+      return decodeURIComponent(fileNameStarMatch[1]);
+    }
+
+    // 2️⃣ потом обычный filename
+    const fileNameMatch = disposition.match(/filename="?([^";]+)"?/i);
+    if (fileNameMatch?.[1]) {
+      return fileNameMatch[1];
+    }
+
+    return "download";
+  };
+
+  const downloadFile = async (id) => {
+    const response = await appendicesService.download(id);
+
+    const blob = response.data;
+    const disposition = response.headers["content-disposition"];
+
+    const fileName = getFileNameFromDisposition(disposition);
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
   };
 
   const FileModal = ({ show, onClose }) => {
@@ -96,16 +153,11 @@ const Appendices = () => {
         const result = await appendicesService.create(
           file,
           fileName,
-          date
+          date,
+          workId
         );
 
-        setAppendices(prev => [
-          ...prev,
-          {
-            id: result.id,
-            name: fileName
-          }
-        ]);
+        fetchData();
 
         toast.success("Файл загружен");
         onClose();
@@ -193,6 +245,7 @@ const Appendices = () => {
                 <th className='text-center'>Тип</th>
                 <th className='text-end'>Дата добавления</th>
                 <th></th>
+                <th></th>
               </tr>
             </thead>
 
@@ -202,10 +255,10 @@ const Appendices = () => {
                   <tr key={item.id}>
                     <td>{index + 1}</td>
                     <td className="fw-semibold text-center">
-                      {item.name}
+                      {item.originalFileName}
                     </td>
                     <td className='text-center'>
-                      {item.type}
+                      <img src={getFileImage(item.contentType)} alt="file" />
                     </td>
                     <td className='text-end'>
                       {item.date}
@@ -217,6 +270,15 @@ const Appendices = () => {
                         onClick={() => deleteFile(item.id)}
                       >
                         Удалить
+                      </Button>
+                    </td>
+                    <td className="text-start">
+                      <Button
+                        variant="outline-success"
+                        size="sm"
+                        onClick={() => downloadFile(item.id)}
+                      >
+                        Скачать
                       </Button>
                     </td>
                   </tr>

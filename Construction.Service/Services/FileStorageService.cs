@@ -37,21 +37,28 @@ public class MinioFileStorageService : IFileStorageService
 
     public async Task<Stream> GetAsync(string objectName, CancellationToken cancellationToken = default)
     {
-        var memoryStream = new MemoryStream();
+        try
+        {
+            var memoryStream = new MemoryStream();
 
-        await _minioClient.GetObjectAsync(
-            new GetObjectArgs()
-                .WithBucket(_bucketName)
-                .WithObject(objectName)
-                .WithCallbackStream(async s =>
-                {
-                    await s.CopyToAsync(memoryStream, cancellationToken);
-                }),
-            cancellationToken
-        );
+            await _minioClient.GetObjectAsync(
+                new GetObjectArgs()
+                    .WithBucket(_bucketName)
+                    .WithObject(objectName)
+                    .WithCallbackStream(stream =>
+                    {
+                        stream.CopyTo(memoryStream);
+                    }),
+                cancellationToken
+            );
 
-        memoryStream.Position = 0;
-        return memoryStream;
+            memoryStream.Position = 0;
+            return memoryStream;
+        }
+        catch
+        {
+            return default;
+        }
     }
 
     public async Task DeleteAsync(string objectName, CancellationToken cancellationToken = default)
