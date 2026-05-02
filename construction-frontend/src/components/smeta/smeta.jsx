@@ -6,7 +6,7 @@ import { materialService } from '../../services/materialService';
 import Select from 'react-select';
 import { Modal, Button, Form } from "react-bootstrap";
 
-const Smeta = ({ workId }) => {
+const Smeta = ({ workId, setTotalEstimate }) => {
 
   const [smetas, setSmetas] = useState([]);
   const [allDataLoad, setAllDataLoad] = useState(false);
@@ -18,6 +18,10 @@ const Smeta = ({ workId }) => {
     smetaService.getByWorkId(workId)
       .then(response => {
         setSmetas(response || []);
+
+        setTotalEstimate(
+          response.reduce((acc, item) => acc + item.price * item.count, 0)
+        );
       })
       .catch(() => {
         toast.error('Ошибка при загрузке смет');

@@ -28,7 +28,12 @@ const Details = ({ work, exitFunc }) => {
   const [estimates, setEstimates] = useState(null);
   const [allDataLoad, setAllDataLoad] = useState(false);
 
-  const [totalEstimate, setTotalEstimate] = useState(150000);
+  const [totalEstimate, setTotalEstimate] = useState(0);
+  const [totalPaid, setTotalPaid] = useState(0);
+
+  const setTotalEstimateFunction = (newValue) => setTotalEstimate(newValue);
+  const setTotalPaidFunction = (newValue) => setTotalPaid(newValue);
+  
 
   const addTotals = () => {
     let objects = [];
@@ -228,8 +233,8 @@ const Details = ({ work, exitFunc }) => {
                 </label>
 
                 <textarea
-                  className="form-control form-control-lg border-accent-primary"
-                  rows={4}
+                  className="form-control form-control-lg border-accent-primary" style={{fontSize: '12px'}} value={work.description}
+                  rows={9}
                 />
               </div>
             </div>
@@ -242,8 +247,8 @@ const Details = ({ work, exitFunc }) => {
                 </label>
 
                 <textarea
-                  className="form-control form-control-lg border-accent-primary"
-                  rows={4}
+                  className="form-control form-control-lg border-accent-primary" style={{fontSize: '12px'}} value={work.note}
+                  rows={9}
                 />
               </div>
             </div>
@@ -255,6 +260,13 @@ const Details = ({ work, exitFunc }) => {
                   <span className="text-muted">Итого по смете:</span>
                   <span className="fw-semibold">
                     {totalEstimate.toLocaleString("ru-RU")} ₽
+                  </span>
+                </div>
+
+                <div className="d-flex justify-content-between mb-2">
+                  <span className="text-muted">Оплачено:</span>
+                  <span className="fw-semibold">
+                    {totalPaid.toLocaleString("ru-RU")} ₽
                   </span>
                 </div>
 
@@ -295,11 +307,11 @@ const Details = ({ work, exitFunc }) => {
 
         <div className="col-6">
           {/* Смета */}
-          <Smeta workId={work.id}/>
+          <Smeta setTotalEstimate={setTotalEstimateFunction} workId={work.id}/>
           {/* Приложения к договору*/}
           <Appendices workId={work.id} />
           {/* Счета */}
-          <Accounts workId={work.id}/>
+          <Accounts setTotalPaid={setTotalPaidFunction} workId={work.id}/>
         </div>
       </div>
     </div>

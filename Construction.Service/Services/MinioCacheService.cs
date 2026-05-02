@@ -49,7 +49,10 @@ public class MinioCacheService : IMinioCacheService
                 new GetObjectArgs()
                     .WithBucket(_bucketName)
                     .WithObject(key)
-                    .WithCallbackStream(async s => await s.CopyToAsync(stream))
+                    .WithCallbackStream(s =>
+                    {
+                        s.CopyTo(stream); // СИНХРОННО
+                    })
             );
 
             stream.Position = 0;

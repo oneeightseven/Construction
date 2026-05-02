@@ -9,7 +9,7 @@ import '../details/details.css';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
 
-const Accounts = ({ workId }) => {
+const Accounts = ({ workId, setTotalPaid }) => {
 
   const [accounts, setAccounts] = useState([]);
   const [allDataLoad, setAllDataLoad] = useState(false);
@@ -22,6 +22,9 @@ const Accounts = ({ workId }) => {
     accountService.getByWorkId(workId)
       .then(response => {
         setAccounts(response || []);
+        setTotalPaid(
+          response.reduce((acc, item) => acc + item.sum, 0)
+        );
       })
       .catch(() => toast.error("Ошибка загрузки счетов"))
       .finally(() => setAllDataLoad(true));
