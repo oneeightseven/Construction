@@ -28,6 +28,20 @@
   color: #61dafb;
 }
 
+.m-r{
+  margin-right: 5px;
+}
+
+.m-l{
+  margin-left: 5px;
+}
+
+.button-radius {
+  border-width: 2px !important;
+  font-weight: 400 !important;
+  border-radius: 5px !important;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

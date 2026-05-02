@@ -71,13 +71,11 @@ const Appendices = (workId) => {
   const getFileNameFromDisposition = (disposition) => {
     if (!disposition) return "download";
 
-    // 1️⃣ сначала filename*
     const fileNameStarMatch = disposition.match(/filename\*\=UTF-8''([^;]+)/i);
     if (fileNameStarMatch?.[1]) {
       return decodeURIComponent(fileNameStarMatch[1]);
     }
 
-    // 2️⃣ потом обычный filename
     const fileNameMatch = disposition.match(/filename="?([^";]+)"?/i);
     if (fileNameMatch?.[1]) {
       return fileNameMatch[1];
@@ -240,12 +238,11 @@ const Appendices = (workId) => {
           <table className="table table-sm table-hover align-middle mb-0">
             <thead className="table-light" style={{ position: "sticky", top: 0 }}>
               <tr>
-                <th>№</th>
-                <th className='text-center'>Название файла</th>
-                <th className='text-center'>Тип</th>
-                <th className='text-end'>Дата добавления</th>
-                <th></th>
-                <th></th>
+                <th style={{width: "10%"}}>№</th>
+                <th style={{width: "10%"}} className='text-center'>Тип</th>
+                <th style={{width: "40%"}} className='text-center'>Название файла</th>
+                <th style={{width: "20%"}} className='text-center'>Дата добавления</th>
+                <th style={{width: "20%"}}></th>
               </tr>
             </thead>
 
@@ -253,34 +250,39 @@ const Appendices = (workId) => {
               {appendices.length > 0 ? (
                 appendices.map((item, index) => (
                   <tr key={item.id}>
-                    <td>{index + 1}</td>
-                    <td className="fw-semibold text-center">
-                      {item.originalFileName}
-                    </td>
-                    <td className='text-center'>
+                    <td style={{width: "10%"}}>{index + 1}</td>
+                    <td style={{width: "10%"}} className='text-center'>
                       <img src={getFileImage(item.contentType)} alt="file" />
                     </td>
-                    <td className='text-end'>
-                      {item.date}
+                    <td style={{width: "40%"}}className="fw-semibold text-center">
+                      {item.originalFileName}
                     </td>
-                    <td className="text-end">
+                    <td style={{width: "20%"}} className='text-center'>
+                      {new Date(item.date).toLocaleString("ru-RU", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
+                    </td>
+                    <td style={{width: "20%"}} className="text-end">
                       <Button
-                        variant="outline-danger"
+                        variant="outline-danger button-radius"
                         size="sm"
                         onClick={() => deleteFile(item.id)}
                       >
                         Удалить
                       </Button>
-                    </td>
-                    <td className="text-start">
                       <Button
-                        variant="outline-success"
+                        variant="outline-success button-radius m-l m-r"
                         size="sm"
                         onClick={() => downloadFile(item.id)}
                       >
                         Скачать
                       </Button>
                     </td>
+                    
                   </tr>
                 ))
               ) : (
